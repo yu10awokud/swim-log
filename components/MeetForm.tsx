@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { uuid } from "@/lib/uuid";
 import { csToDigits, digitsToCs } from "@/lib/time";
 import { COURSE_LABEL, strokeLabel, type Course, type Meet, type MeetResult, type Stroke } from "@/lib/types";
 import { saveMeet } from "@/app/(app)/meets/actions";
@@ -11,7 +12,7 @@ import DistanceInput from "./DistanceInput";
 
 type ResultRow = { key: string; strokeId: string; distance: string; digits: string; note: string };
 
-const newKey = () => crypto.randomUUID();
+const newKey = () => uuid();
 
 /** 試合記録の入力フォーム（新規・編集共通） */
 export default function MeetForm(props: {

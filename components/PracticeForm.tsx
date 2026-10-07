@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { uuid } from "@/lib/uuid";
 import imageCompression from "browser-image-compression";
 import { createClient } from "@/lib/supabase/client";
 import { digitsToCs, csToDigits } from "@/lib/time";
@@ -27,7 +28,7 @@ export type PracticeFormInitial = {
   images: ExistingImage[];
 };
 
-const newKey = () => crypto.randomUUID();
+const newKey = () => uuid();
 
 /** 練習記録の入力フォーム（新規・編集共通） */
 export default function PracticeForm(props: {
@@ -41,7 +42,7 @@ export default function PracticeForm(props: {
   const { initial, strokes, pools } = props;
 
   // 新規のときは、ここで練習の ID を決めておく（画像の保存先フォルダ名に使うため）
-  const [practiceId] = useState(() => initial?.id ?? crypto.randomUUID());
+  const [practiceId] = useState(() => initial?.id ?? uuid());
   const [date, setDate] = useState(initial?.practice_date ?? props.defaultDate);
   const [poolId, setPoolId] = useState(initial?.pool_id ?? pools[0]?.id ?? "");
   const [totalDistance, setTotalDistance] = useState(initial ? String(initial.total_distance) : "");
@@ -135,7 +136,7 @@ export default function PracticeForm(props: {
           initialQuality: 0.8,
           useWebWorker: true,
         });
-        const path = `${props.userId}/${practiceId}/${crypto.randomUUID()}.jpg`;
+        const path = `${props.userId}/${practiceId}/${uuid()}.jpg`;
         const { error: uploadError } = await supabase.storage
           .from(IMAGE_BUCKET)
           .upload(path, compressed, { contentType: "image/jpeg" });

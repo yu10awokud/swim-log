@@ -174,6 +174,12 @@ create policy "own rows" on public.meets           for all to authenticated
 create policy "own rows" on public.meet_results    for all to authenticated
   using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
 
+-- ログイン済みの利用者にテーブルの操作を許可する（実際に触れる行は上の RLS で自分の分だけに絞られる）
+grant select, insert, update, delete
+  on public.strokes, public.pools, public.practices, public.practice_images,
+     public.time_records, public.meets, public.meet_results
+  to authenticated;
+
 -- 未ログインの利用者からはテーブルそのものを触れなくする（RLS に加えた二重の守り）
 revoke all on public.strokes, public.pools, public.practices, public.practice_images,
               public.time_records, public.meets, public.meet_results from anon;
@@ -217,6 +223,7 @@ select
 from public.practices
 group by 1;
 
+grant select on public.best_times, public.monthly_distance to authenticated;
 revoke all on public.best_times, public.monthly_distance from anon;
 
 
