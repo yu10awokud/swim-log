@@ -1,0 +1,56 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import PracticeForm from "@/components/PracticeForm";
+import { requireUser } from "@/lib/supabase/server";
+import { fetchMasters } from "@/lib/queries";
+import { signedUrlMap } from "@/lib/images";
+import type { TimeFormat } from "@/lib/types";
+
+export default async function EditPracticePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const { supabase, user } = await requireUser();
+
+  const { data: practice } = await supabase
+    .from("practices")
+    .select(
+      "id, practice_date, pool_id, total_distance, memo, time_records(format, stroke_id, distance, time_cs, sort_order), practice_images(id, storage_path, sort_order)",
+    )
+    .eq("id", id)
+    .maybeSingle();
+  if (!practice) notFound();
+
+  const { strokes, pools } = await fetchMasters(supabase);
+  const images = [...practice.practice_images].sort((a, b) => a.sort_order - b.sort_order);
+  const urls = await signedUrlMap(
+    supabase,
+    images.map((img) => img.storage_path),
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="page-title">記録を編集</h1>
+        <Link href={`/day/${practice.practice_date}`} className="text-sm text-brand-700">
+          戻る
+        </Link>
+      </div>
+      <PracticeForm
+        userId={user.id}
+        strokes={strokes}
+        pools={pools}
+        defaultDate={practice.practice_date}
+        initial={{
+          id: practice.id,
+          practice_date: practice.practice_date,
+          pool_id: practice.pool_id,
+          total_distance: practice.total_distance,
+          memo: practice.memo,
+          times: [...practice.time_records]
+            .sort((a, b) => a.sort_order - b.sort_order)
+            .map((t) => ({ ...t, format: t.format as TimeFormat })),
+          images: images.map((img) => ({ id: img.id, url: urls.get(img.storage_path) ?? "" })),
+        }}
+      />
+    </div>
+  );
+}
