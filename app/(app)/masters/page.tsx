@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getSupabase } from "@/lib/supabase/server";
-import type { Pool, Stroke } from "@/lib/types";
+import { fetchMasters } from "@/lib/queries";
 import { PoolManager, StrokeManager } from "./MasterManagers";
 
 export default async function MastersPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
@@ -8,14 +8,12 @@ export default async function MastersPage({ searchParams }: { searchParams: Prom
   const activeTab = tab === "pools" ? "pools" : "strokes";
   const supabase = getSupabase();
 
-  const [{ data: strokes }, { data: pools }] = await Promise.all([
-    supabase.from("strokes").select("id, code, name, sort_order").order("sort_order").order("created_at"),
-    supabase.from("pools").select("id, name, course, sort_order").order("sort_order").order("created_at"),
-  ]);
+  const { strokes, pools, loadError } = await fetchMasters(supabase);
 
   return (
     <div className="space-y-4">
       <h1 className="page-title">マスタ管理</h1>
+      {loadError && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{loadError}</p>}
 
       <div className="flex rounded-lg bg-slate-200 p-1 text-sm font-semibold">
         {[
@@ -36,9 +34,9 @@ export default async function MastersPage({ searchParams }: { searchParams: Prom
       </div>
 
       {activeTab === "strokes" ? (
-        <StrokeManager strokes={(strokes ?? []) as Stroke[]} />
+        <StrokeManager strokes={strokes} />
       ) : (
-        <PoolManager pools={(pools ?? []) as Pool[]} />
+        <PoolManager pools={pools} />
       )}
     </div>
   );
