@@ -1,9 +1,8 @@
 import AppShell from "@/components/AppShell";
-import { requireUser } from "@/lib/supabase/server";
 
-// ログインが必要な画面はすべてこのフォルダ (app) の中に置きます。
-// middleware でも確認していますが、念のためここでも未ログインならログイン画面へ戻します。
-export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  await requireUser();
+// 画面を開くたびに最新のデータを読み込む（ビルド時にページを作り置きしない）
+export const dynamic = "force-dynamic";
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   return <AppShell>{children}</AppShell>;
 }

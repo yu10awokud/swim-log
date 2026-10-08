@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import { dbErrorMessage } from "@/lib/errors";
 import { isValidDate } from "@/lib/date";
 import type { ActionResult } from "@/lib/types";
@@ -33,7 +33,7 @@ export async function saveMeet(input: MeetInput): Promise<ActionResult> {
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
   const { id, results, ...values } = parsed.data;
 
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
 
   let meetId = id;
   if (meetId) {
@@ -61,7 +61,7 @@ export async function saveMeet(input: MeetInput): Promise<ActionResult> {
 
 export async function deleteMeet(id: string): Promise<ActionResult> {
   if (!z.string().uuid().safeParse(id).success) return { ok: false, error: "不正な操作です。" };
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
   const { error } = await supabase.from("meets").delete().eq("id", id);
   if (error) return { ok: false, error: dbErrorMessage(error) };
   revalidatePath("/", "layout");

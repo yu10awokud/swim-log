@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import { formatTime } from "@/lib/time";
 import { COURSE_LABEL, type Course } from "@/lib/types";
 import DeleteMeetButton from "./DeleteMeetButton";
 
 export default async function MeetsPage() {
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
 
   const { data } = await supabase
     .from("meets")

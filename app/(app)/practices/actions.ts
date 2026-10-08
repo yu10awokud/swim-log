@@ -1,8 +1,9 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import { dbErrorMessage } from "@/lib/errors";
 import { isValidDate } from "@/lib/date";
 import { IMAGE_BUCKET } from "@/lib/images";
@@ -36,10 +37,10 @@ export async function savePractice(input: PracticeInput): Promise<ActionResult> 
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0].message };
   const p = parsed.data;
 
-  const { supabase, user } = await requireUser();
+  const supabase = getSupabase();
 
-  // 画像のパスは必ず「自分のID/この練習のID/…」の形でなければ受け付けない
-  const prefix = `${user.id}/${p.id}/`;
+  // 画像のパスは必ず「この練習のID/…」の形でなければ受け付けない
+  const prefix = `${p.id}/`;
   if (p.new_image_paths.some((path) => !path.startsWith(prefix) || path.includes(".."))) {
     return { ok: false, error: "画像の保存場所が正しくありません。" };
   }
@@ -107,10 +108,35 @@ export async function savePractice(input: PracticeInput): Promise<ActionResult> 
   return { ok: true };
 }
 
+/**
+ * 画像アップロード用の「一時的な許可（トークン）」を発行します。
+ * ブラウザはこのトークンを使って、決められた保存場所にだけ画像を送れます（2 時間で失効）。
+ */
+export async function prepareImageUploads(
+  practiceId: string,
+  count: number,
+): Promise<{ ok: true; uploads: { path: string; token: string }[] } | { ok: false; error: string }> {
+  if (!z.string().uuid().safeParse(practiceId).success || !Number.isInteger(count) || count < 1 || count > 30) {
+    return { ok: false, error: "不正な操作です。" };
+  }
+  const supabase = getSupabase();
+  const uploads: { path: string; token: string }[] = [];
+  for (let i = 0; i < count; i++) {
+    const path = `${practiceId}/${randomUUID()}.jpg`;
+    const { data, error } = await supabase.storage.from(IMAGE_BUCKET).createSignedUploadUrl(path);
+    if (error || !data) {
+      console.error(error);
+      return { ok: false, error: "画像のアップロード準備に失敗しました。" };
+    }
+    uploads.push({ path: data.path, token: data.token });
+  }
+  return { ok: true, uploads };
+}
+
 /** 練習記録を削除します（タイム・画像も一緒に消えます）。 */
 export async function deletePractice(id: string): Promise<ActionResult> {
   if (!z.string().uuid().safeParse(id).success) return { ok: false, error: "不正な操作です。" };
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
 
   const { data: images } = await supabase.from("practice_images").select("storage_path").eq("practice_id", id);
   if (images && images.length > 0) {

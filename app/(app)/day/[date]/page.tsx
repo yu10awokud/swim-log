@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ImageGallery from "@/components/ImageGallery";
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import { signedUrlMap } from "@/lib/images";
 import { formatDateJa, isValidDate } from "@/lib/date";
 import { formatTime } from "@/lib/time";
@@ -17,7 +17,7 @@ const FORMAT_STYLE: Record<string, string> = {
 export default async function DayPage({ params }: { params: Promise<{ date: string }> }) {
   const { date } = await params;
   if (!isValidDate(date)) notFound();
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
 
   const { data } = await supabase
     .from("practices")

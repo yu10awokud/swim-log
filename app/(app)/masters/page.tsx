@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import type { Pool, Stroke } from "@/lib/types";
 import { PoolManager, StrokeManager } from "./MasterManagers";
 
 export default async function MastersPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const { tab } = await searchParams;
   const activeTab = tab === "pools" ? "pools" : "strokes";
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
 
   const [{ data: strokes }, { data: pools }] = await Promise.all([
     supabase.from("strokes").select("id, code, name, sort_order").order("sort_order").order("created_at"),

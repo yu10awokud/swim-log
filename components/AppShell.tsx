@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { logout } from "@/app/login/actions";
 
 const NAV_ITEMS = [
   { href: "/calendar", label: "カレンダー", icon: "📅" },
@@ -45,11 +44,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           );
         })}
       </ul>
-      <form action={logout} className="border-t border-slate-200 p-3">
-        <button type="submit" className="w-full rounded-lg px-3 py-3 text-left text-slate-500 hover:bg-slate-100">
-          ログアウト
-        </button>
-      </form>
     </nav>
   );
 

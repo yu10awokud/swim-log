@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import { formatTime } from "@/lib/time";
 import { COURSE_LABEL, type Course } from "@/lib/types";
 
@@ -19,7 +19,7 @@ type BestRow = {
 export default async function BestsPage({ searchParams }: { searchParams: Promise<{ course?: string }> }) {
   const params = await searchParams;
   const course: Course = params.course === "LC" ? "LC" : "SC";
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
 
   const { data } = await supabase
     .from("best_times")

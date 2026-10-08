@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import PracticeForm from "@/components/PracticeForm";
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import { fetchMasters } from "@/lib/queries";
 import { signedUrlMap } from "@/lib/images";
 import type { TimeFormat } from "@/lib/types";
 
 export default async function EditPracticePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { supabase, user } = await requireUser();
+  const supabase = getSupabase();
 
   const { data: practice } = await supabase
     .from("practices")
@@ -35,7 +35,6 @@ export default async function EditPracticePage({ params }: { params: Promise<{ i
         </Link>
       </div>
       <PracticeForm
-        userId={user.id}
         strokes={strokes}
         pools={pools}
         defaultDate={practice.practice_date}

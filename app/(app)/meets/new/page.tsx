@@ -1,10 +1,10 @@
 import MeetForm from "@/components/MeetForm";
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import { fetchMasters } from "@/lib/queries";
 import { todayJST } from "@/lib/date";
 
 export default async function NewMeetPage() {
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
   const { strokes } = await fetchMasters(supabase);
   return (
     <div className="space-y-4">

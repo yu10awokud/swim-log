@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import { dbErrorMessage } from "@/lib/errors";
 import type { ActionResult } from "@/lib/types";
 
@@ -38,7 +38,7 @@ export async function savePool(id: string | null, input: { name: string; course:
 }
 
 async function saveRow(table: MasterTable, id: string | null, values: Record<string, string>): Promise<ActionResult> {
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
 
   if (id) {
     const { error } = await supabase.from(table).update(values).eq("id", id);
@@ -59,7 +59,7 @@ async function saveRow(table: MasterTable, id: string | null, values: Record<str
 
 export async function deleteMaster(table: MasterTable, id: string): Promise<ActionResult> {
   if (!MASTER_TABLES.includes(table)) return { ok: false, error: "不正な操作です。" };
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
   const { error } = await supabase.from(table).delete().eq("id", id);
   if (error) return { ok: false, error: dbErrorMessage(error) };
   return done();
@@ -68,7 +68,7 @@ export async function deleteMaster(table: MasterTable, id: string): Promise<Acti
 /** 並び順を 1 つ上（-1）または下（+1）へ動かします。 */
 export async function moveMaster(table: MasterTable, id: string, direction: -1 | 1): Promise<ActionResult> {
   if (!MASTER_TABLES.includes(table) || (direction !== -1 && direction !== 1)) return { ok: false, error: "不正な操作です。" };
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
   const { data: rows, error } = await supabase
     .from(table)
     .select("id, sort_order")

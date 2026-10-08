@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import { addMonths, daysInMonth, firstWeekday, isValidMonth, todayJST } from "@/lib/date";
 
 const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
@@ -21,7 +21,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
   const today = todayJST();
   const month = params.month && isValidMonth(params.month) ? params.month : today.slice(0, 7);
   const days = daysInMonth(month);
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
 
   const { data } = await supabase
     .from("practices")

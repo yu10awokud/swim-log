@@ -1,10 +1,10 @@
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import { addMonths, todayJST } from "@/lib/date";
 import type { Course } from "@/lib/types";
 import AnalysisCharts, { type MonthPoint, type TTPoint } from "./AnalysisCharts";
 
 export default async function AnalysisPage() {
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
   const thisMonth = todayJST().slice(0, 7);
   const firstMonth = addMonths(thisMonth, -11);
 

@@ -8,7 +8,7 @@ import imageCompression from "browser-image-compression";
 import { createClient } from "@/lib/supabase/client";
 import { digitsToCs, csToDigits } from "@/lib/time";
 import { poolLabel, strokeLabel, TIME_FORMATS, type Pool, type Stroke, type TimeFormat } from "@/lib/types";
-import { savePractice } from "@/app/(app)/practices/actions";
+import { prepareImageUploads, savePractice } from "@/app/(app)/practices/actions";
 import TimeInput from "./TimeInput";
 import DistanceInput from "./DistanceInput";
 
@@ -32,7 +32,6 @@ const newKey = () => uuid();
 
 /** 練習記録の入力フォーム（新規・編集共通） */
 export default function PracticeForm(props: {
-  userId: string;
   strokes: Stroke[];
   pools: Pool[];
   defaultDate: string;
@@ -126,22 +125,28 @@ export default function PracticeForm(props: {
     const uploadedPaths: string[] = [];
 
     try {
-      // 1. 画像を縮小して Storage へアップロード
-      for (const [i, img] of newImages.entries()) {
-        setStatus(`画像をアップロード中… (${i + 1}/${newImages.length})`);
-        const compressed = await imageCompression(img.file, {
-          maxWidthOrHeight: 1600,
-          maxSizeMB: 0.4,
-          fileType: "image/jpeg",
-          initialQuality: 0.8,
-          useWebWorker: true,
-        });
-        const path = `${props.userId}/${practiceId}/${uuid()}.jpg`;
-        const { error: uploadError } = await supabase.storage
-          .from(IMAGE_BUCKET)
-          .upload(path, compressed, { contentType: "image/jpeg" });
-        if (uploadError) throw new Error("画像のアップロードに失敗しました。");
-        uploadedPaths.push(path);
+      // 1. 画像を縮小して Storage へアップロード（サーバーが発行した一時的な許可を使う）
+      if (newImages.length > 0) {
+        setStatus("画像のアップロードを準備中…");
+        const prepared = await prepareImageUploads(practiceId, newImages.length);
+        if (!prepared.ok) throw new Error(prepared.error);
+
+        for (const [i, img] of newImages.entries()) {
+          setStatus(`画像をアップロード中… (${i + 1}/${newImages.length})`);
+          const compressed = await imageCompression(img.file, {
+            maxWidthOrHeight: 1600,
+            maxSizeMB: 0.4,
+            fileType: "image/jpeg",
+            initialQuality: 0.8,
+            useWebWorker: true,
+          });
+          const { path, token } = prepared.uploads[i];
+          const { error: uploadError } = await supabase.storage
+            .from(IMAGE_BUCKET)
+            .uploadToSignedUrl(path, token, compressed, { contentType: "image/jpeg" });
+          if (uploadError) throw new Error("画像のアップロードに失敗しました。");
+          uploadedPaths.push(path);
+        }
       }
 
       // 2. 記録を保存
@@ -161,8 +166,6 @@ export default function PracticeForm(props: {
       router.push(`/day/${date}`);
       router.refresh();
     } catch (err) {
-      // 保存に失敗したら、今回アップロードした画像は消しておく
-      if (uploadedPaths.length > 0) await supabase.storage.from(IMAGE_BUCKET).remove(uploadedPaths);
       setError(err instanceof Error ? err.message : "保存に失敗しました。");
       setStatus(null);
     }

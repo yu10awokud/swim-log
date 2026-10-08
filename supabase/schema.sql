@@ -5,7 +5,8 @@
 --         このファイルの中身を全部貼り付けて「Run」を押します（1回だけ）。
 --
 -- 方針：
---   ・全テーブルに user_id を持たせ、RLS で「自分の行だけ」読み書きできるようにする
+--   ・ログイン機能はなし。データベースにはアプリのサーバー（Secret key）経由でしか触れない
+--     （RLS を有効にしてポリシーを 1 つも作らないことで、ブラウザからの直接アクセスをすべて拒否する）
 --   ・タイムは 1/100 秒単位の整数（例：1:05.32 → 6532）で保存する
 --   ・使用中の種目・プールは削除できない（on delete restrict）
 -- =====================================================================
@@ -31,13 +32,12 @@ $$;
 -- ---------------------------------------------------------------------
 create table public.strokes (
   id          uuid primary key default gen_random_uuid(),
-  user_id     uuid not null default auth.uid() references auth.users (id) on delete cascade,
   code        text not null check (char_length(code) between 1 and 20),
   name        text not null default '' check (char_length(name) <= 50),
   sort_order  int  not null default 0,
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now(),
-  unique (user_id, code)
+  unique (code)
 );
 
 
@@ -46,7 +46,6 @@ create table public.strokes (
 -- ---------------------------------------------------------------------
 create table public.pools (
   id          uuid primary key default gen_random_uuid(),
-  user_id     uuid not null default auth.uid() references auth.users (id) on delete cascade,
   name        text not null check (char_length(name) between 1 and 50),
   course      text not null check (course in ('SC', 'LC')),
   sort_order  int  not null default 0,
@@ -60,7 +59,6 @@ create table public.pools (
 -- ---------------------------------------------------------------------
 create table public.practices (
   id              uuid primary key default gen_random_uuid(),
-  user_id         uuid not null default auth.uid() references auth.users (id) on delete cascade,
   practice_date   date not null,
   pool_id         uuid not null references public.pools (id) on delete restrict,
   total_distance  int  not null default 0 check (total_distance between 0 and 100000),
@@ -68,7 +66,7 @@ create table public.practices (
   created_at      timestamptz not null default now(),
   updated_at      timestamptz not null default now()
 );
-create index practices_user_date_idx on public.practices (user_id, practice_date);
+create index practices_date_idx on public.practices (practice_date);
 
 
 -- ---------------------------------------------------------------------
@@ -76,7 +74,6 @@ create index practices_user_date_idx on public.practices (user_id, practice_date
 -- ---------------------------------------------------------------------
 create table public.practice_images (
   id            uuid primary key default gen_random_uuid(),
-  user_id       uuid not null default auth.uid() references auth.users (id) on delete cascade,
   practice_id   uuid not null references public.practices (id) on delete cascade,
   storage_path  text not null unique,
   sort_order    int  not null default 0,
@@ -90,7 +87,6 @@ create index practice_images_practice_idx on public.practice_images (practice_id
 -- ---------------------------------------------------------------------
 create table public.time_records (
   id           uuid primary key default gen_random_uuid(),
-  user_id      uuid not null default auth.uid() references auth.users (id) on delete cascade,
   practice_id  uuid not null references public.practices (id) on delete cascade,
   format       text not null check (format in ('TT', 'Short', 'Middle')),
   stroke_id    uuid not null references public.strokes (id) on delete restrict,
@@ -108,7 +104,6 @@ create index time_records_stroke_idx   on public.time_records (stroke_id);
 -- ---------------------------------------------------------------------
 create table public.meets (
   id          uuid primary key default gen_random_uuid(),
-  user_id     uuid not null default auth.uid() references auth.users (id) on delete cascade,
   name        text not null check (char_length(name) between 1 and 100),
   meet_date   date not null,
   venue       text not null default '' check (char_length(venue) <= 100),
@@ -116,7 +111,7 @@ create table public.meets (
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
-create index meets_user_date_idx on public.meets (user_id, meet_date);
+create index meets_date_idx on public.meets (meet_date);
 
 
 -- ---------------------------------------------------------------------
@@ -124,7 +119,6 @@ create index meets_user_date_idx on public.meets (user_id, meet_date);
 -- ---------------------------------------------------------------------
 create table public.meet_results (
   id          uuid primary key default gen_random_uuid(),
-  user_id     uuid not null default auth.uid() references auth.users (id) on delete cascade,
   meet_id     uuid not null references public.meets (id) on delete cascade,
   stroke_id   uuid not null references public.strokes (id) on delete restrict,
   distance    int  not null check (distance between 1 and 10000),
@@ -148,8 +142,9 @@ create trigger meets_updated_at     before update on public.meets     for each r
 
 -- =====================================================================
 -- RLS（行レベルセキュリティ）
---   ログイン中のユーザー自身の行（user_id = auth.uid()）だけ、
---   読む・追加・変更・削除ができる。未ログイン（anon）は何もできない。
+--   RLS を有効にして、ポリシーは 1 つも作らない。
+--   → ブラウザ（Publishable key）からは何も読み書きできない。
+--   → アプリのサーバー（Secret key）だけが RLS を通り抜けて読み書きできる。
 -- =====================================================================
 alter table public.strokes         enable row level security;
 alter table public.pools           enable row level security;
@@ -159,30 +154,10 @@ alter table public.time_records    enable row level security;
 alter table public.meets           enable row level security;
 alter table public.meet_results    enable row level security;
 
-create policy "own rows" on public.strokes         for all to authenticated
-  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-create policy "own rows" on public.pools           for all to authenticated
-  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-create policy "own rows" on public.practices       for all to authenticated
-  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-create policy "own rows" on public.practice_images for all to authenticated
-  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-create policy "own rows" on public.time_records    for all to authenticated
-  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-create policy "own rows" on public.meets           for all to authenticated
-  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-create policy "own rows" on public.meet_results    for all to authenticated
-  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
-
--- ログイン済みの利用者にテーブルの操作を許可する（実際に触れる行は上の RLS で自分の分だけに絞られる）
-grant select, insert, update, delete
-  on public.strokes, public.pools, public.practices, public.practice_images,
-     public.time_records, public.meets, public.meet_results
-  to authenticated;
-
--- 未ログインの利用者からはテーブルそのものを触れなくする（RLS に加えた二重の守り）
+-- 念のため、ブラウザ側の役割（anon / authenticated）からテーブルの権限そのものも外す
 revoke all on public.strokes, public.pools, public.practices, public.practice_images,
-              public.time_records, public.meets, public.meet_results from anon;
+              public.time_records, public.meets, public.meet_results
+  from anon, authenticated;
 
 
 -- =====================================================================
@@ -223,25 +198,35 @@ select
 from public.practices
 group by 1;
 
-grant select on public.best_times, public.monthly_distance to authenticated;
-revoke all on public.best_times, public.monthly_distance from anon;
+revoke all on public.best_times, public.monthly_distance from anon, authenticated;
+
+-- アプリのサーバー（Secret key = service_role）には全権限を明示的に与える
+grant select, insert, update, delete
+  on public.strokes, public.pools, public.practices, public.practice_images,
+     public.time_records, public.meets, public.meet_results
+  to service_role;
+grant select on public.best_times, public.monthly_distance to service_role;
 
 
 -- =====================================================================
 -- Storage：練習メニュー画像用の「非公開」バケット
---   保存場所は  {user_id}/{practice_id}/{ランダムID}.jpg
---   1階層目のフォルダ名が自分の user_id と一致するファイルだけ操作できる。
+--   保存場所は  {practice_id}/{ランダムID}.jpg
+--   ポリシーは作らない（＝ブラウザから直接は見られない）。
+--   閲覧はサーバーが発行する期限付き URL、アップロードはサーバーが発行する一時的な許可で行う。
 -- =====================================================================
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('practice-images', 'practice-images', false, 10485760,
         array['image/jpeg', 'image/png', 'image/webp'])
 on conflict (id) do nothing;
 
-create policy "practice-images: read own"   on storage.objects for select to authenticated
-  using (bucket_id = 'practice-images' and (storage.foldername(name))[1] = (select auth.uid())::text);
-create policy "practice-images: insert own" on storage.objects for insert to authenticated
-  with check (bucket_id = 'practice-images' and (storage.foldername(name))[1] = (select auth.uid())::text);
-create policy "practice-images: update own" on storage.objects for update to authenticated
-  using (bucket_id = 'practice-images' and (storage.foldername(name))[1] = (select auth.uid())::text);
-create policy "practice-images: delete own" on storage.objects for delete to authenticated
-  using (bucket_id = 'practice-images' and (storage.foldername(name))[1] = (select auth.uid())::text);
+
+-- =====================================================================
+-- 種目マスタの初期データ
+-- =====================================================================
+insert into public.strokes (code, name, sort_order) values
+  ('Fr',  '自由形',       1),
+  ('Ba',  '背泳ぎ',       2),
+  ('Br',  '平泳ぎ',       3),
+  ('Fly', 'バタフライ',   4),
+  ('IM',  '個人メドレー', 5)
+on conflict (code) do nothing;

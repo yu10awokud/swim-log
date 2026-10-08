@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import MeetForm from "@/components/MeetForm";
-import { requireUser } from "@/lib/supabase/server";
+import { getSupabase } from "@/lib/supabase/server";
 import { fetchMasters } from "@/lib/queries";
 import type { Course, MeetResult } from "@/lib/types";
 
 export default async function EditMeetPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { supabase } = await requireUser();
+  const supabase = getSupabase();
 
   const { data: meet } = await supabase
     .from("meets")

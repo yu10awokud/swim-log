@@ -1,33 +1,23 @@
 import "server-only";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { createServerClient } from "@supabase/ssr";
-import { SUPABASE_KEY, SUPABASE_URL } from "./env";
+import { createClient } from "@supabase/supabase-js";
+import { SUPABASE_URL } from "./env";
 
-/** サーバー（ページ・Server Action）用の Supabase クライアント。リクエストごとに作り直します。 */
-export async function createClient() {
-  const cookieStore = await cookies();
-
-  return createServerClient(SUPABASE_URL, SUPABASE_KEY, {
-    cookies: {
-      getAll() {
-        return cookieStore.getAll();
-      },
-      setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
-        } catch {
-          // ページの描画中は Cookie を書き換えられません。セッション更新は middleware が担当するので無視してOKです。
-        }
-      },
-    },
+/**
+ * サーバー（ページ・Server Action）専用の Supabase クライアント。
+ *
+ * Secret key を使うので、データベースの保護（RLS）を通り抜けて全データを読み書きできます。
+ * そのため "server-only" にしてあり、ブラウザ側のコードからは読み込めません。
+ * データベースには、このサーバー経由でしかアクセスできない仕組みです。
+ */
+export function getSupabase() {
+  const secretKey = process.env.SUPABASE_SECRET_KEY;
+  if (!SUPABASE_URL || !secretKey) {
+    throw new Error(
+      "環境変数 NEXT_PUBLIC_SUPABASE_URL または SUPABASE_SECRET_KEY が設定されていません。" +
+        "Vercel の Settings → Environment Variables（ローカルでは .env.local）を確認してください。",
+    );
+  }
+  return createClient(SUPABASE_URL, secretKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
   });
-}
-
-/** ログイン中のユーザーを返します。未ログインならログイン画面へ移動させます。 */
-export async function requireUser() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) redirect("/login");
-  return { supabase, user: data.user };
 }
