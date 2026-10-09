@@ -193,7 +193,7 @@ export default function MeetForm(props: {
       {error && <p className="error-box">{error}</p>}
 
       <div className="sticky bottom-0 -mx-4 border-t border-slate-200 bg-slate-50/95 px-4 py-3 backdrop-blur">
-        <button type="submit" className="btn-primary w-full py-3 text-base" disabled={saving}>
+        <button type="submit" className="btn-primary w-full py-2.5 text-sm" disabled={saving}>
           {saving ? "保存中…" : "保存する"}
         </button>
       </div>

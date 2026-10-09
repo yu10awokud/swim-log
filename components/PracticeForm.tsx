@@ -350,7 +350,7 @@ export default function PracticeForm(props: {
 
       {/* 保存ボタン（スマホでは画面下に固定） */}
       <div className="sticky bottom-0 -mx-4 border-t border-slate-200 bg-slate-50/95 px-4 py-3 backdrop-blur">
-        <button type="submit" className="btn-primary w-full py-3 text-base" disabled={busy}>
+        <button type="submit" className="btn-primary w-full py-2.5 text-sm" disabled={busy}>
           {status ?? "保存する"}
         </button>
       </div>

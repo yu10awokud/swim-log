@@ -12,7 +12,7 @@ export default function PageHeader(props: {
   return (
     <div className="space-y-2">
       {props.back && (
-        <Link href={props.back.href} className="inline-flex items-center gap-0.5 text-sm font-semibold text-brand-600">
+        <Link href={props.back.href} className="inline-flex items-center gap-0.5 text-xs font-semibold text-brand-600">
           <ChevronLeft className="h-4 w-4" />
           {props.back.label}
         </Link>
@@ -20,7 +20,7 @@ export default function PageHeader(props: {
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           {props.icon && (
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-sky-100 text-brand-600 sm:h-12 sm:w-12">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-sky-100 text-brand-600 [&>svg]:h-5 [&>svg]:w-5">
               {props.icon}
             </div>
           )}

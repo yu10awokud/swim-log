@@ -48,19 +48,19 @@ export default function StatCard(props: {
 }) {
   const tone = TONES[props.tone ?? "sky"];
   return (
-    <div className="card relative flex items-center gap-3 overflow-hidden p-3 sm:p-4">
+    <div className="card relative flex items-center gap-2.5 overflow-hidden p-3">
       {props.icon && (
-        <div className={`hidden h-12 w-12 shrink-0 items-center justify-center rounded-full sm:flex md:h-14 md:w-14 ${tone.badge}`}>
+        <div className={`hidden h-9 w-9 shrink-0 items-center justify-center rounded-full sm:flex [&>svg]:h-5 [&>svg]:w-5 ${tone.badge}`}>
           {props.icon}
         </div>
       )}
       <div className="relative z-10 min-w-0">
-        <div className="text-xs text-slate-500">{props.label}</div>
-        <div className="mt-0.5 whitespace-nowrap text-lg font-medium tabular-nums text-navy-900 sm:text-2xl md:text-3xl">
+        <div className="text-[11px] text-slate-500">{props.label}</div>
+        <div className="whitespace-nowrap text-base font-bold tabular-nums text-navy-900 sm:text-lg">
           {props.value}
-          {props.unit && <span className="ml-0.5 text-xs sm:text-base">{props.unit}</span>}
+          {props.unit && <span className="ml-0.5 text-[11px] font-normal">{props.unit}</span>}
         </div>
-        {props.sub && <div className="text-xs text-slate-500">{props.sub}</div>}
+        {props.sub && <div className="text-[11px] text-slate-500">{props.sub}</div>}
       </div>
       <Decoration kind={props.deco ?? "none"} color={tone.deco} />
     </div>

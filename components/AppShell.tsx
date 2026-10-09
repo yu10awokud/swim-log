@@ -43,10 +43,10 @@ function SidebarWaves() {
 
 function Logo() {
   return (
-    <div className="flex flex-col items-center px-5 pb-6 pt-8 text-center">
-      <WaveLogo className="h-10 w-16" />
-      <div className="mt-1 text-[26px] font-normal tracking-wide text-white">Swim Log</div>
-      <div className="mt-1 text-[11px] text-sky-100/50">泳いだ日々を、もっと楽しく</div>
+    <div className="flex flex-col items-center px-5 pb-5 pt-7 text-center">
+      <WaveLogo className="h-7 w-11" />
+      <div className="mt-1 text-lg font-bold text-white">Swim Log</div>
+      <div className="mt-0.5 text-[10px] text-sky-100/50">泳いだ日々を、もっと楽しく</div>
     </div>
   );
 }
@@ -72,13 +72,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`flex items-center gap-4 rounded-2xl px-4 py-3.5 text-[15px] transition ${
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${
                   active
                     ? "bg-white/[0.12] text-white"
                     : "text-sky-50/80 hover:bg-white/[0.06]"
                 }`}
               >
-                <item.Icon className="h-5 w-5 shrink-0" />
+                <item.Icon className="h-[18px] w-[18px] shrink-0" />
                 <span className="flex-1">{item.label}</span>
                 {active && <ChevronRight className="h-4 w-4" />}
               </Link>
@@ -93,7 +93,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh lg:flex">
       {/* PC：常に表示するサイドバー */}
-      <aside className="hidden w-64 shrink-0 lg:block">
+      <aside className="hidden w-56 shrink-0 lg:block">
         <div className="sticky top-0 h-dvh">{nav}</div>
       </aside>
 
@@ -108,7 +108,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <MenuIcon className="h-6 w-6" />
         </button>
         <WaveLogo className="h-6 w-9" />
-        <span>{current?.label ?? "Swim Log"}</span>
+        <span className="text-sm">{current?.label ?? "Swim Log"}</span>
       </header>
 
       {open && (

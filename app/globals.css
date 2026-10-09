@@ -8,8 +8,6 @@
   }
   body {
     @apply bg-sky-50 text-slate-700 antialiased;
-    font-family:
-      "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
     /* うっすらとした水色のグラデーションと、右上の波模様 */
     background-image:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200' preserveAspectRatio='none'%3E%3Cpath d='M0 120c120-60 240-60 360 0s240 60 440-20V0H0z' fill='%23dbeafe' fill-opacity='.45'/%3E%3Cpath d='M0 150c140-50 260-40 400 10s260 30 400-40V0H0z' fill='%23e0f2fe' fill-opacity='.35'/%3E%3C/svg%3E"),
@@ -39,7 +37,7 @@
     @apply rounded-3xl border border-white/80 bg-white/60 p-3 shadow-[0_4px_24px_rgba(28,55,86,0.04)] backdrop-blur sm:p-6;
   }
   .label {
-    @apply mb-1 block text-sm text-slate-500;
+    @apply mb-1 block text-xs font-medium text-slate-500;
   }
   .input {
     @apply block w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-base text-slate-800
@@ -47,7 +45,7 @@
       disabled:bg-slate-100;
   }
   .btn {
-    @apply inline-flex items-center justify-center gap-1 rounded-xl px-4 py-2 text-sm font-medium
+    @apply inline-flex items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold
       transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
@@ -61,45 +59,45 @@
   }
   /* 角の丸い白い四角ボタン（‹ › など） */
   .btn-square {
-    @apply inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-navy-700 transition hover:bg-slate-50 active:scale-95;
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-navy-700 transition hover:bg-slate-50 active:scale-95;
   }
   .page-title {
-    @apply text-2xl font-normal text-navy-900;
+    @apply text-lg font-bold text-navy-900;
   }
   .page-subtitle {
-    @apply text-sm text-slate-500;
+    @apply text-xs text-slate-500;
   }
   .section-title {
-    @apply font-medium text-navy-900;
+    @apply text-sm font-bold text-navy-900;
   }
   /* 切り替えタブ（短水路／長水路 など） */
   .seg {
-    @apply flex rounded-2xl bg-slate-100 p-1 text-sm;
+    @apply flex rounded-xl bg-slate-100 p-1 text-xs;
   }
   .seg-item {
-    @apply flex-1 rounded-xl py-2 text-center text-slate-500 transition;
+    @apply flex-1 rounded-lg py-1.5 text-center text-slate-500 transition;
   }
   .seg-item-active {
-    @apply bg-white font-medium text-navy-800 shadow-sm;
+    @apply bg-white font-semibold text-navy-800 shadow-sm;
   }
   /* 小さな切り替えボタン（フォーム内） */
   .chip {
-    @apply rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 transition;
+    @apply rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs text-slate-600 transition;
   }
   .chip-active {
     @apply border-navy-500 bg-navy-500 text-white;
   }
   /* 枠付きの2〜3択スイッチ（短水路／長水路 など、フォーム内） */
   .toggle {
-    @apply flex rounded-xl border border-slate-200 bg-white p-0.5 text-sm;
+    @apply flex rounded-lg border border-slate-200 bg-white p-0.5 text-xs;
   }
   .toggle-item {
-    @apply rounded-lg px-3 py-1.5 text-slate-500 transition;
+    @apply rounded-md px-2.5 py-1 text-slate-500 transition;
   }
   .toggle-item-active {
     @apply bg-navy-500 text-white;
   }
   .error-box {
-    @apply rounded-xl bg-red-50 px-3 py-2 text-sm text-red-600;
+    @apply rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600;
   }
 }

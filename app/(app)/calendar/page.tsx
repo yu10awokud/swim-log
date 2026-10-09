@@ -58,14 +58,14 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
   const [y, m] = month.split("-").map(Number);
 
   return (
-    <div className="panel space-y-4 sm:space-y-6">
+    <div className="panel space-y-3 sm:space-y-4">
       {/* 月の切り替え */}
       <div className="flex items-center justify-between">
         <Link href={`/calendar?month=${addMonths(month, -1)}`} className="btn-square" aria-label="前の月">
           <ChevronLeft />
         </Link>
         <div className="text-center">
-          <h1 className="text-2xl font-normal text-navy-900 sm:text-3xl">
+          <h1 className="text-lg font-bold text-navy-900">
             {y}年{m}月
           </h1>
           {month !== today.slice(0, 7) && (
@@ -109,11 +109,11 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
 
       {/* カレンダー本体 */}
       <div className="card p-2 sm:p-5">
-        <div className="mb-1 grid grid-cols-7 gap-1 text-center text-xs sm:mb-2 sm:gap-1.5 sm:text-sm">
+        <div className="mb-1 grid grid-cols-7 gap-1 text-center text-[11px] sm:mb-1.5 sm:gap-1.5 sm:text-sm">
           {WEEKDAYS.map((w, i) => (
             <div
               key={w}
-              className={`rounded-lg py-1.5 sm:py-2.5 ${
+              className={`rounded-md py-1 sm:py-1.5 ${
                 i === 0 ? "bg-red-50/70 text-red-400" : i === 6 ? "bg-blue-50/70 text-blue-500" : "bg-slate-50 text-slate-600"
               }`}
             >
@@ -123,7 +123,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
         </div>
         <div className="grid grid-cols-7 gap-1 sm:gap-1.5">
           {cells.map((date, i) => {
-            if (!date) return <div key={`blank-${i}`} className="aspect-[4/5] rounded-lg border border-slate-100 bg-white/50 sm:aspect-auto sm:min-h-[104px]" />;
+            if (!date) return <div key={`blank-${i}`} className="aspect-[4/5] rounded-lg border border-slate-100 bg-white/50 sm:aspect-auto sm:min-h-[84px]" />;
             const distance = byDate.get(date) ?? 0;
             const poolNames = poolsByDate.get(date) ?? [];
             const weekday = i % 7;
@@ -132,12 +132,12 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
               <Link
                 key={date}
                 href={`/day/${date}`}
-                className={`flex aspect-[4/5] min-w-0 flex-col overflow-hidden rounded-lg border px-1 pb-1 pt-1 transition active:scale-95 sm:aspect-auto sm:min-h-[104px] sm:rounded-xl sm:px-2 sm:pt-1.5 ${
+                className={`flex aspect-[4/5] min-w-0 flex-col overflow-hidden rounded-lg border px-1 pb-1 pt-1 transition active:scale-95 sm:aspect-auto sm:min-h-[84px] sm:rounded-lg sm:px-2 sm:pt-1.5 ${
                   distance ? `${levelClass(distance)} border` : "border-slate-100 bg-white hover:bg-slate-50"
                 } ${isToday ? "ring-1 ring-amber-300" : ""}`}
               >
                 <span
-                  className={`text-xs sm:text-base ${
+                  className={`text-[11px] sm:text-xs ${
                     weekday === 0 ? "text-red-400" : weekday === 6 ? "text-blue-500" : "text-navy-800"
                   }`}
                 >
@@ -145,12 +145,12 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
                 </span>
                 {distance > 0 && (
                   <span className="mt-auto flex flex-col items-center text-navy-800">
-                    <SwimIcon className="hidden h-5 w-5 text-brand-400 sm:block" />
-                    <span className="text-[11px] font-semibold leading-tight tabular-nums sm:text-base">
+                    <SwimIcon className="hidden h-4 w-4 text-brand-400 sm:block" />
+                    <span className="text-[11px] font-bold leading-tight tabular-nums sm:text-sm">
                       {shortDistance(distance)}
                     </span>
                     {poolNames.length > 0 && (
-                      <span className="w-full truncate text-center text-[9px] leading-tight text-navy-700/80 sm:text-[11px]">
+                      <span className="w-full truncate text-center text-[9px] leading-tight text-navy-700/80 sm:text-[10px]">
                         {poolNames.join("/")}
                       </span>
                     )}
@@ -162,7 +162,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
         </div>
 
         {/* 凡例 */}
-        <div className="mt-3 flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-[11px] text-slate-500">
+        <div className="mt-2 flex flex-wrap items-center justify-end gap-x-3 gap-y-1 text-[10px] text-slate-500">
           {[...LEVELS].reverse().map((l) => (
             <span key={l.label} className="flex items-center gap-1">
               <span className={`inline-block h-3 w-3 rounded border-2 ${l.className}`} />
@@ -172,7 +172,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
         </div>
       </div>
 
-      <Link href="/practices/new" className="btn-primary w-full py-3.5 text-base">
+      <Link href="/practices/new" className="btn-primary w-full py-2.5 text-sm">
         <PlusIcon /> 今日の記録を入力
       </Link>
     </div>

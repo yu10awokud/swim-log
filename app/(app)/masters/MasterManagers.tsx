@@ -129,7 +129,7 @@ export function StrokeManager({ strokes }: { strokes: Stroke[] }) {
             ) : (
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <span className="font-medium text-navy-900">{stroke.code}</span>
+                  <span className="font-semibold text-navy-900">{stroke.code}</span>
                   <span className="ml-2 text-slate-600">{stroke.name}</span>
                 </div>
                 <RowButtons
@@ -230,7 +230,7 @@ export function PoolManager({ pools }: { pools: Pool[] }) {
             ) : (
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="truncate font-medium text-navy-900">{pool.name}</div>
+                  <div className="truncate font-semibold text-navy-900">{pool.name}</div>
                   <span
                     className={`mt-0.5 inline-block rounded px-1.5 py-0.5 text-xs ${
                       pool.course === "SC" ? "bg-sky-100 text-sky-700" : "bg-indigo-100 text-indigo-700"

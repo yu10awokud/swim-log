@@ -58,7 +58,7 @@ export default async function DayPage({ params }: { params: Promise<{ date: stri
         subtitle={practices.length > 0 ? `合計 ${total.toLocaleString()} m` : undefined}
       />
 
-      <Link href={`/practices/new?date=${date}`} className="btn-primary w-full py-3.5 text-base">
+      <Link href={`/practices/new?date=${date}`} className="btn-primary w-full py-2.5 text-sm">
         <PlusIcon /> この日に記録を追加
       </Link>
 
@@ -68,7 +68,7 @@ export default async function DayPage({ params }: { params: Promise<{ date: stri
         <article key={p.id} className="card space-y-3">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <div className="text-3xl font-medium tabular-nums text-navy-900">
+              <div className="text-xl font-bold tabular-nums text-navy-900">
                 {p.total_distance.toLocaleString()}
                 <span className="ml-0.5 text-sm font-normal text-slate-500">m</span>
               </div>

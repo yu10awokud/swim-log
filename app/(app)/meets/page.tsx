@@ -43,7 +43,7 @@ export default async function MeetsPage() {
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <div className="text-xs text-slate-500">{meet.meet_date.replaceAll("-", "/")}</div>
-              <h2 className="section-title text-lg">{meet.name}</h2>
+              <h2 className="section-title">{meet.name}</h2>
               <div className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-slate-600">
                 {meet.venue && <span>{meet.venue}</span>}
                 <span
