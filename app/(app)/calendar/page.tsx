@@ -25,13 +25,24 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
 
   const { data } = await supabase
     .from("practices")
-    .select("practice_date, total_distance")
+    .select("practice_date, total_distance, created_at, pools(name)")
+    .order("created_at")
     .gte("practice_date", `${month}-01`)
     .lte("practice_date", `${month}-${String(days).padStart(2, "0")}`);
 
   // 日付ごとの合計距離
+  // 日付ごとの合計距離と、泳いだプール名（二部練でプールが違えば両方）
   const byDate = new Map<string, number>();
-  for (const p of data ?? []) byDate.set(p.practice_date, (byDate.get(p.practice_date) ?? 0) + p.total_distance);
+  const poolsByDate = new Map<string, string[]>();
+  for (const p of data ?? []) {
+    byDate.set(p.practice_date, (byDate.get(p.practice_date) ?? 0) + p.total_distance);
+    const pool = (Array.isArray(p.pools) ? p.pools[0] : p.pools) as { name: string } | null;
+    if (pool) {
+      const names = poolsByDate.get(p.practice_date) ?? [];
+      if (!names.includes(pool.name)) names.push(pool.name);
+      poolsByDate.set(p.practice_date, names);
+    }
+  }
   const monthTotal = [...byDate.values()].reduce((a, b) => a + b, 0);
   const practiceDays = byDate.size;
 
@@ -91,13 +102,14 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
           {cells.map((date, i) => {
             if (!date) return <div key={`blank-${i}`} />;
             const distance = byDate.get(date) ?? 0;
+            const poolNames = poolsByDate.get(date) ?? [];
             const weekday = i % 7;
             const isToday = date === today;
             return (
               <Link
                 key={date}
                 href={`/day/${date}`}
-                className={`flex aspect-square flex-col items-center justify-start rounded-lg pt-1 text-sm transition active:scale-95 ${
+                className={`flex aspect-[4/5] min-w-0 flex-col items-center justify-start overflow-hidden rounded-lg px-0.5 pt-1 text-sm transition active:scale-95 ${
                   distance ? levelClass(distance) : "hover:bg-slate-100"
                 } ${isToday ? "ring-2 ring-amber-400" : ""}`}
               >
@@ -108,6 +120,11 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
                 >
                   {Number(date.slice(8))}
                 </span>
+                {poolNames.length > 0 && (
+                  <span className="mt-0.5 w-full truncate text-center text-[9px] leading-tight opacity-90 sm:text-[11px]">
+                    {poolNames.join("/")}
+                  </span>
+                )}
                 {distance > 0 && (
                   <span className="mt-auto pb-1 text-[11px] font-bold leading-none tabular-nums sm:text-sm">
                     {shortDistance(distance)}
