@@ -3,13 +3,14 @@ import { getSupabase } from "@/lib/supabase/server";
 import { formatTime } from "@/lib/time";
 import { COURSE_LABEL, type Course } from "@/lib/types";
 import DeleteMeetButton from "./DeleteMeetButton";
+import LapText from "@/components/LapText";
 
 export default async function MeetsPage() {
   const supabase = getSupabase();
 
   const { data } = await supabase
     .from("meets")
-    .select("id, name, meet_date, venue, course, meet_results(id, distance, time_cs, note, sort_order, strokes(code))")
+    .select("id, name, meet_date, venue, course, meet_results(*, strokes(code))")
     .order("meet_date", { ascending: false })
     .order("created_at", { ascending: false });
 
@@ -65,7 +66,10 @@ export default async function MeetsPage() {
                       {r.stroke?.code} {r.distance}m
                     </td>
                     <td className="py-1.5 text-xs text-slate-500">{r.note}</td>
-                    <td className="py-1.5 text-right font-mono font-semibold tabular-nums">{formatTime(r.time_cs)}</td>
+                    <td className="py-1.5 text-right font-mono font-semibold tabular-nums">
+                      {formatTime(r.time_cs)}
+                      <LapText laps={r.laps_cs} />
+                    </td>
                   </tr>
                 ))}
               </tbody>

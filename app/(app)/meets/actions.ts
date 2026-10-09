@@ -6,6 +6,7 @@ import { getSupabase } from "@/lib/supabase/server";
 import { dbErrorMessage } from "@/lib/errors";
 import { isValidDate } from "@/lib/date";
 import type { ActionResult } from "@/lib/types";
+import { withoutEmptyLaps } from "@/lib/laps";
 
 const meetSchema = z.object({
   id: z.string().uuid().nullable(),
@@ -20,6 +21,7 @@ const meetSchema = z.object({
         distance: z.number().int().min(1, "距離を入力してください").max(10000),
         time_cs: z.number().int().min(1, "タイムを正しく入力してください").max(99999999),
         note: z.string().trim().max(100, "備考が長すぎます"),
+        laps_cs: z.array(z.number().int().min(1).max(99999999).nullable()).max(60).nullable().optional(),
       }),
     )
     .max(50),
@@ -51,7 +53,7 @@ export async function saveMeet(input: MeetInput): Promise<ActionResult> {
   if (results.length > 0) {
     const { error } = await supabase
       .from("meet_results")
-      .insert(results.map((r, i) => ({ ...r, meet_id: meetId, sort_order: i + 1 })));
+      .insert(results.map((r, i) => ({ ...withoutEmptyLaps(r), meet_id: meetId, sort_order: i + 1 })));
     if (error) return { ok: false, error: dbErrorMessage(error) };
   }
 

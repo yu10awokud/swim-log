@@ -17,6 +17,8 @@ export type TimeRecord = {
   distance: number;
   time_cs: number;
   sort_order: number;
+  /** 50m ごとのラップ（任意。空欄は null） */
+  laps_cs?: (number | null)[] | null;
 };
 
 export type PracticeImage = { id: string; storage_path: string; sort_order: number };
@@ -38,6 +40,8 @@ export type MeetResult = {
   time_cs: number;
   note: string;
   sort_order: number;
+  /** 50m ごとのラップ（任意。空欄は null） */
+  laps_cs?: (number | null)[] | null;
 };
 
 /** プールの表示名：「踏水会（短水路）」 */

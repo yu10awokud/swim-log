@@ -9,8 +9,10 @@ import { COURSE_LABEL, strokeLabel, type Course, type Meet, type MeetResult, typ
 import { saveMeet } from "@/app/(app)/meets/actions";
 import TimeInput from "./TimeInput";
 import DistanceInput from "./DistanceInput";
+import LapInputs from "./LapInputs";
+import { fitLaps, lapsToCs } from "@/lib/laps";
 
-type ResultRow = { key: string; strokeId: string; distance: string; digits: string; note: string };
+type ResultRow = { key: string; strokeId: string; distance: string; digits: string; note: string; laps: string[] };
 
 const newKey = () => uuid();
 
@@ -35,8 +37,9 @@ export default function MeetForm(props: {
           distance: String(r.distance),
           digits: csToDigits(r.time_cs),
           note: r.note,
+          laps: (r.laps_cs ?? []).map((v) => (v ? csToDigits(v) : "")),
         }))
-      : [{ key: newKey(), strokeId: strokes[0]?.id ?? "", distance: "100", digits: "", note: "" }],
+      : [{ key: newKey(), strokeId: strokes[0]?.id ?? "", distance: "100", digits: "", note: "", laps: [] }],
   );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +68,9 @@ export default function MeetForm(props: {
       const distance = Number(row.distance);
       if (!row.digits || cs === null || cs <= 0) return setError(`結果 ${i + 1} 行目のタイムが正しくありません。`);
       if (!distance) return setError(`結果 ${i + 1} 行目の距離を入力してください。`);
-      results.push({ stroke_id: row.strokeId, distance, time_cs: cs, note: row.note });
+      const laps = lapsToCs(row.laps, distance, cs);
+      if (typeof laps === "string") return setError(`結果 ${i + 1} 行目：${laps}`);
+      results.push({ stroke_id: row.strokeId, distance, time_cs: cs, note: row.note, laps_cs: laps });
     }
 
     setSaving(true);
@@ -134,6 +139,7 @@ export default function MeetForm(props: {
                   distance: rs[rs.length - 1]?.distance ?? "100",
                   digits: "",
                   note: "",
+                  laps: [],
                 },
               ])
             }
@@ -158,12 +164,21 @@ export default function MeetForm(props: {
             </select>
             <div className="flex items-start gap-3">
               <div className="flex-1">
-                <DistanceInput value={row.distance} onChange={(v) => updateRow(row.key, { distance: v })} />
+                <DistanceInput
+                  value={row.distance}
+                  onChange={(v) => updateRow(row.key, { distance: v, laps: fitLaps(row.laps, Number(v)) })}
+                />
               </div>
               <div className="w-32">
                 <TimeInput digits={row.digits} onChange={(d) => updateRow(row.key, { digits: d })} />
               </div>
             </div>
+            <LapInputs
+              distance={Number(row.distance)}
+              laps={row.laps}
+              totalDigits={row.digits}
+              onChange={(laps) => updateRow(row.key, { laps })}
+            />
             <input
               className="input"
               placeholder="備考（予選・決勝など）"

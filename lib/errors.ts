@@ -14,6 +14,9 @@ export function dbErrorMessage(error: PostgrestError): string {
       return "データベースの設定が古いままです。Supabase の SQL Editor で supabase/migration_remove_auth.sql を実行してください。（23502）";
     case "42501":
       return "データベースへのアクセス権がありません。Vercel の環境変数 SUPABASE_SECRET_KEY に Secret key（sb_secret_...）が入っているか確認してください。（42501）";
+    case "PGRST204":
+    case "42703":
+      return "ラップ用のデータベース設定がまだです。Supabase の SQL Editor で supabase/migration_laps.sql を実行してください。（" + error.code + "）";
     case "42P01":
     case "PGRST205":
       return "テーブルが見つかりません。Supabase の SQL Editor で supabase/schema.sql を実行してください。（" + error.code + "）";

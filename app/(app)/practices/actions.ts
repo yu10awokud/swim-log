@@ -8,6 +8,7 @@ import { dbErrorMessage } from "@/lib/errors";
 import { isValidDate } from "@/lib/date";
 import { IMAGE_BUCKET } from "@/lib/images";
 import type { ActionResult } from "@/lib/types";
+import { withoutEmptyLaps } from "@/lib/laps";
 
 const practiceSchema = z.object({
   id: z.string().uuid(),
@@ -22,6 +23,7 @@ const practiceSchema = z.object({
         stroke_id: z.string().uuid("タイムの種目を選択してください"),
         distance: z.number().int().min(1, "タイムの距離を入力してください").max(10000),
         time_cs: z.number().int().min(1, "タイムを正しく入力してください").max(99999999),
+        laps_cs: z.array(z.number().int().min(1).max(99999999).nullable()).max(60).nullable().optional(),
       }),
     )
     .max(100),
@@ -64,7 +66,7 @@ export async function savePractice(input: PracticeInput): Promise<ActionResult> 
   if (p.times.length > 0) {
     const { error } = await supabase
       .from("time_records")
-      .insert(p.times.map((t, i) => ({ ...t, practice_id: p.id, sort_order: i + 1 })));
+      .insert(p.times.map((t, i) => ({ ...withoutEmptyLaps(t), practice_id: p.id, sort_order: i + 1 })));
     if (error) return { ok: false, error: dbErrorMessage(error) };
   }
 

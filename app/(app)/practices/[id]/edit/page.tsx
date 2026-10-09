@@ -13,7 +13,7 @@ export default async function EditPracticePage({ params }: { params: Promise<{ i
   const { data: practice } = await supabase
     .from("practices")
     .select(
-      "id, practice_date, pool_id, total_distance, memo, time_records(format, stroke_id, distance, time_cs, sort_order), practice_images(id, storage_path, sort_order)",
+      "id, practice_date, pool_id, total_distance, memo, time_records(*), practice_images(id, storage_path, sort_order)",
     )
     .eq("id", id)
     .maybeSingle();

@@ -92,6 +92,7 @@ create table public.time_records (
   stroke_id    uuid not null references public.strokes (id) on delete restrict,
   distance     int  not null check (distance between 1 and 10000),
   time_cs      int  not null check (time_cs between 1 and 99999999),
+  laps_cs      int[],                -- 50m ごとのラップ（任意。空欄は null）
   sort_order   int  not null default 0,
   created_at   timestamptz not null default now()
 );
@@ -124,6 +125,7 @@ create table public.meet_results (
   distance    int  not null check (distance between 1 and 10000),
   time_cs     int  not null check (time_cs between 1 and 99999999),
   note        text not null default '' check (char_length(note) <= 100),
+  laps_cs     int[],                 -- 50m ごとのラップ（任意。空欄は null）
   sort_order  int  not null default 0,
   created_at  timestamptz not null default now()
 );

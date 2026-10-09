@@ -11,7 +11,7 @@ export default async function EditMeetPage({ params }: { params: Promise<{ id: s
 
   const { data: meet } = await supabase
     .from("meets")
-    .select("id, name, meet_date, venue, course, meet_results(id, stroke_id, distance, time_cs, note, sort_order)")
+    .select("id, name, meet_date, venue, course, meet_results(*)")
     .eq("id", id)
     .maybeSingle();
   if (!meet) notFound();

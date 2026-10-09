@@ -11,10 +11,12 @@ import { poolLabel, strokeLabel, TIME_FORMATS, type Pool, type Stroke, type Time
 import { prepareImageUploads, savePractice } from "@/app/(app)/practices/actions";
 import TimeInput from "./TimeInput";
 import DistanceInput from "./DistanceInput";
+import LapInputs from "./LapInputs";
+import { fitLaps, lapsToCs } from "@/lib/laps";
 
 const IMAGE_BUCKET = "practice-images";
 
-type TimeRow = { key: string; format: TimeFormat; strokeId: string; distance: string; digits: string };
+type TimeRow = { key: string; format: TimeFormat; strokeId: string; distance: string; digits: string; laps: string[] };
 type ExistingImage = { id: string; url: string };
 type NewImage = { key: string; file: File; preview: string };
 
@@ -24,7 +26,7 @@ export type PracticeFormInitial = {
   pool_id: string;
   total_distance: number;
   memo: string;
-  times: { format: TimeFormat; stroke_id: string; distance: number; time_cs: number }[];
+  times: { format: TimeFormat; stroke_id: string; distance: number; time_cs: number; laps_cs?: (number | null)[] | null }[];
   images: ExistingImage[];
 };
 
@@ -54,6 +56,7 @@ export default function PracticeForm(props: {
         strokeId: t.stroke_id,
         distance: String(t.distance),
         digits: csToDigits(t.time_cs),
+        laps: (t.laps_cs ?? []).map((v) => (v ? csToDigits(v) : "")),
       })) ?? [],
   );
   const [existingImages, setExistingImages] = useState<ExistingImage[]>(initial?.images ?? []);
@@ -94,6 +97,7 @@ export default function PracticeForm(props: {
           strokeId: last?.strokeId ?? strokes[0].id,
           distance: last?.distance ?? "100",
           digits: "",
+          laps: [],
         },
       ];
     });
@@ -118,7 +122,9 @@ export default function PracticeForm(props: {
       const distance = Number(row.distance);
       if (!row.digits || cs === null || cs <= 0) return setError(`タイム ${i + 1} 行目のタイムが正しくありません。`);
       if (!distance) return setError(`タイム ${i + 1} 行目の距離を入力してください。`);
-      timePayload.push({ format: row.format, stroke_id: row.strokeId, distance, time_cs: cs });
+      const laps = lapsToCs(row.laps, distance, cs);
+      if (typeof laps === "string") return setError(`タイム ${i + 1} 行目：${laps}`);
+      timePayload.push({ format: row.format, stroke_id: row.strokeId, distance, time_cs: cs, laps_cs: laps });
     }
 
     const supabase = createClient();
@@ -325,12 +331,21 @@ export default function PracticeForm(props: {
             </select>
             <div className="flex items-start gap-3">
               <div className="flex-1">
-                <DistanceInput value={row.distance} onChange={(v) => updateTime(row.key, { distance: v })} />
+                <DistanceInput
+                  value={row.distance}
+                  onChange={(v) => updateTime(row.key, { distance: v, laps: fitLaps(row.laps, Number(v)) })}
+                />
               </div>
               <div className="w-32">
                 <TimeInput digits={row.digits} onChange={(d) => updateTime(row.key, { digits: d })} />
               </div>
             </div>
+            <LapInputs
+              distance={Number(row.distance)}
+              laps={row.laps}
+              totalDigits={row.digits}
+              onChange={(laps) => updateTime(row.key, { laps })}
+            />
           </div>
         ))}
       </section>

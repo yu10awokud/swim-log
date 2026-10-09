@@ -7,6 +7,7 @@ import { formatDateJa, isValidDate } from "@/lib/date";
 import { formatTime } from "@/lib/time";
 import { poolLabel, type Course } from "@/lib/types";
 import DeletePracticeButton from "./DeletePracticeButton";
+import LapText from "@/components/LapText";
 
 const FORMAT_STYLE: Record<string, string> = {
   TT: "bg-amber-100 text-amber-800",
@@ -24,7 +25,7 @@ export default async function DayPage({ params }: { params: Promise<{ date: stri
     .select(
       `id, total_distance, memo, created_at,
        pools(name, course),
-       time_records(id, format, distance, time_cs, sort_order, strokes(code)),
+       time_records(*, strokes(code)),
        practice_images(id, storage_path, sort_order)`,
     )
     .eq("practice_date", date)
@@ -99,7 +100,10 @@ export default async function DayPage({ params }: { params: Promise<{ date: stri
                     <td className="py-1.5">
                       {t.stroke?.code} {t.distance}m
                     </td>
-                    <td className="py-1.5 text-right font-mono tabular-nums">{formatTime(t.time_cs)}</td>
+                    <td className="py-1.5 text-right font-mono tabular-nums">
+                      {formatTime(t.time_cs)}
+                      <LapText laps={t.laps_cs} />
+                    </td>
                   </tr>
                 ))}
               </tbody>
