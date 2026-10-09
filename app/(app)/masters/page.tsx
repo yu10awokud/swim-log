@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { GearIcon } from "@/components/Icons";
+import PageHeader from "@/components/PageHeader";
 import { getSupabase } from "@/lib/supabase/server";
 import { fetchMasters } from "@/lib/queries";
 import { PoolManager, StrokeManager } from "./MasterManagers";
@@ -11,11 +13,11 @@ export default async function MastersPage({ searchParams }: { searchParams: Prom
   const { strokes, pools, loadError } = await fetchMasters(supabase);
 
   return (
-    <div className="space-y-4">
-      <h1 className="page-title">マスタ管理</h1>
-      {loadError && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{loadError}</p>}
+    <div className="panel space-y-4">
+      <PageHeader icon={<GearIcon className="h-6 w-6" />} title="マスタ管理" subtitle="種目とプールの登録" />
+      {loadError && <p className="error-box">{loadError}</p>}
 
-      <div className="flex rounded-lg bg-slate-200 p-1 text-sm font-semibold">
+      <div className="seg">
         {[
           { key: "strokes", label: "種目" },
           { key: "pools", label: "プール" },
@@ -24,9 +26,7 @@ export default async function MastersPage({ searchParams }: { searchParams: Prom
             key={t.key}
             href={`/masters?tab=${t.key}`}
             replace
-            className={`flex-1 rounded-md py-2 text-center ${
-              activeTab === t.key ? "bg-white text-brand-700 shadow-sm" : "text-slate-600"
-            }`}
+            className={`seg-item ${activeTab === t.key ? "seg-item-active" : ""}`}
           >
             {t.label}
           </Link>

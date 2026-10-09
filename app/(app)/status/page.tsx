@@ -1,4 +1,6 @@
 import { getSupabase } from "@/lib/supabase/server";
+import { GearIcon } from "@/components/Icons";
+import PageHeader from "@/components/PageHeader";
 import { SUPABASE_URL } from "@/lib/supabase/env";
 
 // 設定の自己診断ページ（/status）。秘密の値そのものは表示しません。
@@ -78,8 +80,8 @@ export default async function StatusPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="page-title">設定の診断</h1>
+    <div className="panel space-y-4">
+      <PageHeader icon={<GearIcon className="h-6 w-6" />} title="設定の診断" />
       <ul className="card divide-y divide-slate-100 p-0">
         {checks.map((c) => (
           <li key={c.label} className="flex items-start gap-3 p-3 text-sm">

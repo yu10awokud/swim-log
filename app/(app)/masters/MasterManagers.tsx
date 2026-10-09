@@ -60,7 +60,7 @@ function RowButtons(props: {
 
 function ErrorText({ error }: { error: string | null }) {
   if (!error) return null;
-  return <p className="mt-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>;
+  return <p className="mt-2 error-box">{error}</p>;
 }
 
 // ---------------------------------------------------------------------
@@ -114,7 +114,7 @@ export function StrokeManager({ strokes }: { strokes: Stroke[] }) {
   return (
     <div className="space-y-4">
       <div className="card">
-        <h2 className="mb-2 font-semibold">種目を追加</h2>
+        <h2 className="section-title mb-2">種目を追加</h2>
         <p className="mb-2 text-xs text-slate-500">略称（Fr など）と名前（自由形 など）を入力します。</p>
         <StrokeForm onDone={() => {}} />
       </div>
@@ -129,7 +129,7 @@ export function StrokeManager({ strokes }: { strokes: Stroke[] }) {
             ) : (
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <span className="font-semibold">{stroke.code}</span>
+                  <span className="font-bold text-navy-900">{stroke.code}</span>
                   <span className="ml-2 text-slate-600">{stroke.name}</span>
                 </div>
                 <RowButtons
@@ -157,13 +157,13 @@ export function StrokeManager({ strokes }: { strokes: Stroke[] }) {
 
 function CourseSelect({ value, onChange }: { value: Course; onChange: (c: Course) => void }) {
   return (
-    <div className="flex shrink-0 rounded-lg border border-slate-300 p-0.5 text-sm">
+    <div className="toggle shrink-0">
       {(["SC", "LC"] as Course[]).map((c) => (
         <button
           key={c}
           type="button"
           onClick={() => onChange(c)}
-          className={`rounded-md px-3 py-1.5 ${value === c ? "bg-brand-600 font-semibold text-white" : "text-slate-600"}`}
+          className={`toggle-item ${value === c ? "toggle-item-active" : ""}`}
         >
           {COURSE_LABEL[c]}
         </button>
@@ -216,7 +216,7 @@ export function PoolManager({ pools }: { pools: Pool[] }) {
   return (
     <div className="space-y-4">
       <div className="card">
-        <h2 className="mb-2 font-semibold">プールを追加</h2>
+        <h2 className="section-title mb-2">プールを追加</h2>
         <PoolForm onDone={() => {}} />
       </div>
 
@@ -230,7 +230,7 @@ export function PoolManager({ pools }: { pools: Pool[] }) {
             ) : (
               <div className="flex items-center justify-between gap-2">
                 <div className="min-w-0">
-                  <div className="truncate font-semibold">{pool.name}</div>
+                  <div className="truncate font-bold text-navy-900">{pool.name}</div>
                   <span
                     className={`mt-0.5 inline-block rounded px-1.5 py-0.5 text-xs ${
                       pool.course === "SC" ? "bg-sky-100 text-sky-700" : "bg-indigo-100 text-indigo-700"

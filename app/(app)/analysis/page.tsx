@@ -1,4 +1,6 @@
 import { getSupabase } from "@/lib/supabase/server";
+import { ChartIcon } from "@/components/Icons";
+import PageHeader from "@/components/PageHeader";
 import { addMonths, todayJST } from "@/lib/date";
 import type { Course } from "@/lib/types";
 import AnalysisCharts, { type MonthPoint, type TTPoint } from "./AnalysisCharts";
@@ -45,8 +47,8 @@ export default async function AnalysisPage() {
   });
 
   return (
-    <div className="space-y-4">
-      <h1 className="page-title">分析</h1>
+    <div className="panel space-y-4">
+      <PageHeader icon={<ChartIcon className="h-6 w-6" />} title="分析" subtitle="TTタイムの推移と練習量" />
       <AnalysisCharts ttPoints={ttPoints} months={months} />
     </div>
   );

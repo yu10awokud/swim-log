@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { PencilIcon } from "@/components/Icons";
+import PageHeader from "@/components/PageHeader";
 import { notFound } from "next/navigation";
 import PracticeForm from "@/components/PracticeForm";
 import { getSupabase } from "@/lib/supabase/server";
@@ -27,13 +28,12 @@ export default async function EditPracticePage({ params }: { params: Promise<{ i
   );
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="page-title">記録を編集</h1>
-        <Link href={`/day/${practice.practice_date}`} className="text-sm text-brand-700">
-          戻る
-        </Link>
-      </div>
+    <div className="panel space-y-4">
+      <PageHeader
+        back={{ href: `/day/${practice.practice_date}`, label: "戻る" }}
+        icon={<PencilIcon className="h-6 w-6" />}
+        title="記録を編集"
+      />
       <PracticeForm
         strokes={strokes}
         pools={pools}

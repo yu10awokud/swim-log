@@ -7,7 +7,19 @@
     -webkit-tap-highlight-color: transparent;
   }
   body {
-    @apply bg-slate-50 text-slate-800 antialiased;
+    @apply bg-sky-50 text-slate-700 antialiased;
+    font-family:
+      "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+    /* うっすらとした水色のグラデーションと、右上の波模様 */
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 200' preserveAspectRatio='none'%3E%3Cpath d='M0 120c120-60 240-60 360 0s240 60 440-20V0H0z' fill='%23dbeafe' fill-opacity='.45'/%3E%3Cpath d='M0 150c140-50 260-40 400 10s260 30 400-40V0H0z' fill='%23e0f2fe' fill-opacity='.35'/%3E%3C/svg%3E"),
+      linear-gradient(180deg, #f3f8ff 0%, #eef5fd 100%);
+    background-repeat: no-repeat;
+    background-size:
+      100% 220px,
+      100% 100%;
+    background-attachment: fixed;
+    min-height: 100dvh;
   }
   /* iPhone で入力欄をタップしたときに勝手に拡大されないよう、文字は 16px 以上にする */
   input,
@@ -18,31 +30,76 @@
 }
 
 @layer components {
+  /* 白いカード（全画面共通） */
   .card {
-    @apply rounded-xl border border-slate-200 bg-white p-4 shadow-sm;
+    @apply rounded-2xl border border-white bg-white p-4 shadow-[0_6px_24px_rgba(18,61,132,0.07)];
+  }
+  /* 画面全体を包む大きな白いパネル */
+  .panel {
+    @apply rounded-3xl border border-white/80 bg-white/70 p-3 shadow-[0_10px_40px_rgba(18,61,132,0.06)] backdrop-blur sm:p-6;
   }
   .label {
-    @apply mb-1 block text-sm font-medium text-slate-600;
+    @apply mb-1 block text-sm font-semibold text-navy-800/80;
   }
   .input {
-    @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base
-      focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200
+    @apply block w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-base text-slate-800
+      focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-100
       disabled:bg-slate-100;
   }
   .btn {
-    @apply inline-flex items-center justify-center gap-1 rounded-lg px-4 py-2 text-sm font-semibold
+    @apply inline-flex items-center justify-center gap-1 rounded-xl px-4 py-2 text-sm font-bold
       transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
-    @apply btn bg-brand-600 text-white hover:bg-brand-700;
+    @apply btn bg-gradient-to-r from-brand-500 to-navy-500 text-white shadow-[0_6px_16px_rgba(14,165,233,0.3)] hover:brightness-105;
   }
   .btn-secondary {
-    @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50;
+    @apply btn border border-slate-200 bg-white text-navy-700 shadow-sm hover:bg-sky-50;
   }
   .btn-danger {
-    @apply btn border border-red-200 bg-white text-red-600 hover:bg-red-50;
+    @apply btn border border-red-100 bg-white text-red-500 hover:bg-red-50;
+  }
+  /* 角の丸い白い四角ボタン（‹ › など） */
+  .btn-square {
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-navy-700 shadow-sm transition hover:bg-sky-50 active:scale-95;
   }
   .page-title {
-    @apply text-xl font-bold text-slate-800;
+    @apply text-2xl font-extrabold tracking-tight text-navy-900;
+  }
+  .page-subtitle {
+    @apply text-sm text-slate-500;
+  }
+  .section-title {
+    @apply font-bold text-navy-900;
+  }
+  /* 切り替えタブ（短水路／長水路 など） */
+  .seg {
+    @apply flex rounded-2xl bg-sky-100/70 p-1 text-sm font-bold;
+  }
+  .seg-item {
+    @apply flex-1 rounded-xl py-2 text-center text-navy-700/60 transition;
+  }
+  .seg-item-active {
+    @apply bg-white text-brand-600 shadow-[0_2px_10px_rgba(18,61,132,0.1)];
+  }
+  /* 小さな切り替えボタン（フォーム内） */
+  .chip {
+    @apply rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 transition;
+  }
+  .chip-active {
+    @apply border-transparent bg-gradient-to-r from-brand-500 to-navy-500 font-bold text-white shadow-sm;
+  }
+  /* 枠付きの2〜3択スイッチ（短水路／長水路 など、フォーム内） */
+  .toggle {
+    @apply flex rounded-xl border border-slate-200 bg-white p-0.5 text-sm;
+  }
+  .toggle-item {
+    @apply rounded-lg px-3 py-1.5 text-slate-500 transition;
+  }
+  .toggle-item-active {
+    @apply bg-gradient-to-r from-brand-500 to-navy-500 font-bold text-white shadow-sm;
+  }
+  .error-box {
+    @apply rounded-xl bg-red-50 px-3 py-2 text-sm text-red-600;
   }
 }

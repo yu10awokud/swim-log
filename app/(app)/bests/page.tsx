@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { TrophyIcon } from "@/components/Icons";
+import PageHeader from "@/components/PageHeader";
 import { getSupabase } from "@/lib/supabase/server";
 import { formatTime } from "@/lib/time";
 import { COURSE_LABEL, type Course } from "@/lib/types";
@@ -39,19 +41,20 @@ export default async function BestsPage({ searchParams }: { searchParams: Promis
   }
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="page-title">ベスト</h1>
-        <p className="text-sm text-slate-500">試合記録の中から、種目×距離ごとの最速タイムを表示します。</p>
-      </div>
+    <div className="panel space-y-4">
+      <PageHeader
+        icon={<TrophyIcon className="h-6 w-6" />}
+        title="ベスト"
+        subtitle="試合記録からの最速タイム"
+      />
 
-      <div className="flex rounded-lg bg-slate-200 p-1 text-sm font-semibold">
+      <div className="seg">
         {(["SC", "LC"] as Course[]).map((c) => (
           <Link
             key={c}
             href={`/bests?course=${c}`}
             replace
-            className={`flex-1 rounded-md py-2 text-center ${course === c ? "bg-white text-brand-700 shadow-sm" : "text-slate-600"}`}
+            className={`seg-item ${course === c ? "seg-item-active" : ""}`}
           >
             {COURSE_LABEL[c]}
           </Link>
@@ -69,7 +72,7 @@ export default async function BestsPage({ searchParams }: { searchParams: Promis
 
       {groups.map((group) => (
         <section key={group.code} className="card p-0">
-          <h2 className="border-b border-slate-100 px-4 py-2 font-semibold">
+          <h2 className="section-title border-b border-slate-100 px-4 py-3">
             {group.code}
             <span className="ml-2 text-sm font-normal text-slate-500">{group.name}</span>
           </h2>
@@ -78,7 +81,7 @@ export default async function BestsPage({ searchParams }: { searchParams: Promis
               <li key={`${row.stroke_id}-${row.distance}`}>
                 <Link href={`/meets#meet-${row.meet_id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50">
                   <span className="w-16 shrink-0 text-sm text-slate-600">{row.distance}m</span>
-                  <span className="w-24 shrink-0 text-right font-mono text-lg font-bold tabular-nums text-brand-700">
+                  <span className="w-24 shrink-0 text-right font-mono text-lg font-extrabold tabular-nums text-navy-900">
                     {formatTime(row.time_cs)}
                   </span>
                   <span className="min-w-0 flex-1 text-right text-xs text-slate-500">

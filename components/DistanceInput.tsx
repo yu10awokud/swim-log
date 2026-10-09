@@ -24,11 +24,7 @@ export default function DistanceInput(props: { value: string; onChange: (value: 
             key={d}
             type="button"
             onClick={() => props.onChange(String(d))}
-            className={`rounded-full border px-2.5 py-1 text-xs ${
-              props.value === String(d)
-                ? "border-brand-600 bg-brand-600 text-white"
-                : "border-slate-300 bg-white text-slate-600"
-            }`}
+            className={`chip rounded-full px-2.5 py-1 text-xs ${props.value === String(d) ? "chip-active" : ""}`}
           >
             {d}
           </button>

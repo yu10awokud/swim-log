@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { FlagIcon } from "@/components/Icons";
+import PageHeader from "@/components/PageHeader";
 import { notFound } from "next/navigation";
 import MeetForm from "@/components/MeetForm";
 import { getSupabase } from "@/lib/supabase/server";
@@ -20,13 +21,8 @@ export default async function EditMeetPage({ params }: { params: Promise<{ id: s
   const results = ([...meet.meet_results] as MeetResult[]).sort((a, b) => a.sort_order - b.sort_order);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="page-title">試合記録を編集</h1>
-        <Link href="/meets" className="text-sm text-brand-700">
-          戻る
-        </Link>
-      </div>
+    <div className="panel space-y-4">
+      <PageHeader back={{ href: "/meets", label: "試合記録へ" }} icon={<FlagIcon className="h-6 w-6" />} title="試合記録を編集" />
       <MeetForm
         strokes={strokes}
         defaultDate={meet.meet_date}

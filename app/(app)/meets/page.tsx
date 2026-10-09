@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { FlagIcon, PlusIcon } from "@/components/Icons";
+import PageHeader from "@/components/PageHeader";
 import { getSupabase } from "@/lib/supabase/server";
 import { formatTime } from "@/lib/time";
 import { COURSE_LABEL, type Course } from "@/lib/types";
@@ -23,13 +25,16 @@ export default async function MeetsPage() {
   }));
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="page-title">試合記録</h1>
-        <Link href="/meets/new" className="btn-primary">
-          ＋ 追加
-        </Link>
-      </div>
+    <div className="panel space-y-4">
+      <PageHeader
+        icon={<FlagIcon className="h-6 w-6" />}
+        title="試合記録"
+        action={
+          <Link href="/meets/new" className="btn-primary">
+            <PlusIcon className="h-4 w-4" /> 追加
+          </Link>
+        }
+      />
 
       {meets.length === 0 && <p className="card text-sm text-slate-500">試合記録がまだありません。</p>}
 
@@ -38,7 +43,7 @@ export default async function MeetsPage() {
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
               <div className="text-xs text-slate-500">{meet.meet_date.replaceAll("-", "/")}</div>
-              <h2 className="font-bold">{meet.name}</h2>
+              <h2 className="section-title text-lg">{meet.name}</h2>
               <div className="mt-0.5 flex flex-wrap items-center gap-2 text-sm text-slate-600">
                 {meet.venue && <span>{meet.venue}</span>}
                 <span

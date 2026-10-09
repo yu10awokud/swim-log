@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { PlusIcon, SwimIcon } from "@/components/Icons";
+import PageHeader from "@/components/PageHeader";
 import { notFound } from "next/navigation";
 import ImageGallery from "@/components/ImageGallery";
 import { getSupabase } from "@/lib/supabase/server";
@@ -48,21 +50,16 @@ export default async function DayPage({ params }: { params: Promise<{ date: stri
   const total = practices.reduce((sum, p) => sum + p.total_distance, 0);
 
   return (
-    <div className="space-y-4">
-      <div>
-        <Link href={`/calendar?month=${date.slice(0, 7)}`} className="text-sm text-brand-700">
-          ‹ カレンダーへ
-        </Link>
-        <h1 className="page-title mt-1">{formatDateJa(date)}</h1>
-        {practices.length > 0 && (
-          <p className="text-sm text-slate-500">
-            合計 <span className="font-semibold text-slate-700">{total.toLocaleString()} m</span>
-          </p>
-        )}
-      </div>
+    <div className="panel space-y-4">
+      <PageHeader
+        back={{ href: `/calendar?month=${date.slice(0, 7)}`, label: "カレンダーへ" }}
+        icon={<SwimIcon className="h-6 w-6" />}
+        title={formatDateJa(date)}
+        subtitle={practices.length > 0 ? `合計 ${total.toLocaleString()} m` : undefined}
+      />
 
-      <Link href={`/practices/new?date=${date}`} className="btn-primary w-full py-3 text-base">
-        ＋ この日に記録を追加
+      <Link href={`/practices/new?date=${date}`} className="btn-primary w-full py-3.5 text-base">
+        <PlusIcon /> この日に記録を追加
       </Link>
 
       {practices.length === 0 && <p className="card text-sm text-slate-500">この日の記録はありません。</p>}
@@ -71,7 +68,7 @@ export default async function DayPage({ params }: { params: Promise<{ date: stri
         <article key={p.id} className="card space-y-3">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <div className="text-2xl font-bold tabular-nums text-brand-700">
+              <div className="text-3xl font-extrabold tabular-nums tracking-tight text-navy-900">
                 {p.total_distance.toLocaleString()}
                 <span className="ml-0.5 text-sm font-normal text-slate-500">m</span>
               </div>

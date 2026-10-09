@@ -238,7 +238,7 @@ export default function PracticeForm(props: {
       {/* 画像 */}
       <section className="card space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">練習メニューの画像</h2>
+          <h2 className="section-title">練習メニューの画像</h2>
           <button type="button" className="btn-secondary" onClick={() => fileInput.current?.click()}>
             ＋ 画像を追加
           </button>
@@ -283,7 +283,7 @@ export default function PracticeForm(props: {
       {/* タイム */}
       <section className="card space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">タイム</h2>
+          <h2 className="section-title">タイム</h2>
           <button type="button" className="btn-secondary" onClick={addTime}>
             ＋ タイムを追加
           </button>
@@ -307,11 +307,7 @@ export default function PracticeForm(props: {
                   key={f}
                   type="button"
                   onClick={() => updateTime(row.key, { format: f })}
-                  className={`flex-1 rounded-md border py-1.5 text-sm ${
-                    row.format === f
-                      ? "border-brand-600 bg-brand-600 font-semibold text-white"
-                      : "border-slate-300 bg-white text-slate-600"
-                  }`}
+                  className={`chip flex-1 ${row.format === f ? "chip-active" : ""}`}
                 >
                   {f}
                 </button>
@@ -350,7 +346,7 @@ export default function PracticeForm(props: {
         ))}
       </section>
 
-      {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="error-box">{error}</p>}
 
       {/* 保存ボタン（スマホでは画面下に固定） */}
       <div className="sticky bottom-0 -mx-4 border-t border-slate-200 bg-slate-50/95 px-4 py-3 backdrop-blur">

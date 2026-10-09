@@ -13,6 +13,8 @@ import {
   YAxis,
 } from "recharts";
 import { formatTime } from "@/lib/time";
+import StatCard from "@/components/StatCard";
+import { ChartIcon, ClockIcon, GaugeIcon, SwimIcon, TrophyIcon } from "@/components/Icons";
 import { COURSE_LABEL, type Course } from "@/lib/types";
 
 export type TTPoint = {
@@ -27,7 +29,7 @@ export type TTPoint = {
 export type MonthPoint = { month: string; distance: number; days: number };
 
 // グラフの色（アプリのメインカラーに合わせています）
-const SERIES = "#0284c7";
+const SERIES = "#1e5bb8";
 const GRID = "#e2e8f0";
 const AXIS = "#64748b";
 
@@ -36,7 +38,7 @@ export default function AnalysisCharts({ ttPoints, months }: { ttPoints: TTPoint
 
   return (
     <div className="space-y-4">
-      <div className="flex rounded-lg bg-slate-200 p-1 text-sm font-semibold">
+      <div className="seg">
         {[
           { key: "tt" as const, label: "TT推移" },
           { key: "monthly" as const, label: "月別距離" },
@@ -45,7 +47,7 @@ export default function AnalysisCharts({ ttPoints, months }: { ttPoints: TTPoint
             key={t.key}
             type="button"
             onClick={() => setTab(t.key)}
-            className={`flex-1 rounded-md py-2 ${tab === t.key ? "bg-white text-brand-700 shadow-sm" : "text-slate-600"}`}
+            className={`seg-item ${tab === t.key ? "seg-item-active" : ""}`}
           >
             {t.label}
           </button>
@@ -104,13 +106,13 @@ function TTChart({ points }: { points: TTPoint[] }) {
             </option>
           ))}
         </select>
-        <div className="flex shrink-0 rounded-lg border border-slate-300 bg-white p-0.5 text-sm">
+        <div className="toggle shrink-0">
           {(["SC", "LC"] as Course[]).map((c) => (
             <button
               key={c}
               type="button"
               onClick={() => setCourse(c)}
-              className={`rounded-md px-3 ${course === c ? "bg-brand-600 font-semibold text-white" : "text-slate-600"}`}
+              className={`toggle-item ${course === c ? "toggle-item-active" : ""}`}
             >
               {COURSE_LABEL[c]}
             </button>
@@ -123,9 +125,21 @@ function TTChart({ points }: { points: TTPoint[] }) {
       ) : (
         <>
           <div className="grid grid-cols-3 gap-2">
-            <Stat label="ベスト" value={best ? formatTime(best.timeCs) : "-"} sub={best?.date.replaceAll("-", "/")} />
-            <Stat label="最新" value={formatTime(latest.timeCs)} sub={latest.date.replaceAll("-", "/")} />
-            <Stat label="記録数" value={`${data.length}`} sub="本" />
+            <StatCard
+              label="ベスト"
+              value={best ? formatTime(best.timeCs) : "-"}
+              sub={best?.date.replaceAll("-", "/")}
+              icon={<TrophyIcon className="h-6 w-6" />}
+              tone="amber"
+            />
+            <StatCard
+              label="最新"
+              value={formatTime(latest.timeCs)}
+              sub={latest.date.replaceAll("-", "/")}
+              icon={<ClockIcon className="h-6 w-6" />}
+              tone="sky"
+            />
+            <StatCard label="記録数" value={`${data.length}`} unit="本" icon={<ChartIcon className="h-6 w-6" />} tone="indigo" />
           </div>
 
           <div className="card px-1 py-3">
@@ -199,11 +213,21 @@ function MonthlyChart({ months }: { months: MonthPoint[] }) {
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-2">
-        <Stat label="直近12か月の合計" value={`${(total / 1000).toFixed(1)}`} sub="km" />
-        <Stat
+        <StatCard
+          label="直近12か月の合計"
+          value={`${(total / 1000).toFixed(1)}`}
+          unit="km"
+          icon={<SwimIcon className="h-7 w-7" />}
+          tone="sky"
+          deco="wave"
+        />
+        <StatCard
           label="月平均（練習した月）"
           value={activeMonths ? `${(total / activeMonths / 1000).toFixed(1)}` : "-"}
-          sub={activeMonths ? "km" : ""}
+          unit={activeMonths ? "km" : ""}
+          icon={<GaugeIcon className="h-7 w-7" />}
+          tone="teal"
+          deco="curve"
         />
       </div>
 
@@ -260,16 +284,6 @@ function MonthlyChart({ months }: { months: MonthPoint[] }) {
           </tbody>
         </table>
       </details>
-    </div>
-  );
-}
-
-function Stat({ label, value, sub }: { label: string; value: string; sub?: string }) {
-  return (
-    <div className="card p-3 text-center">
-      <div className="text-xs text-slate-500">{label}</div>
-      <div className="mt-0.5 font-mono text-lg font-bold tabular-nums">{value}</div>
-      {sub && <div className="text-xs text-slate-500">{sub}</div>}
     </div>
   );
 }

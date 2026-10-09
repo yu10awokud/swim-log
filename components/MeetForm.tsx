@@ -102,13 +102,13 @@ export default function MeetForm(props: {
           </div>
           <div>
             <span className="label">水路</span>
-            <div className="flex rounded-lg border border-slate-300 p-0.5 text-sm">
+            <div className="toggle">
               {(["SC", "LC"] as Course[]).map((c) => (
                 <button
                   key={c}
                   type="button"
                   onClick={() => setCourse(c)}
-                  className={`flex-1 rounded-md py-1.5 ${course === c ? "bg-brand-600 font-semibold text-white" : "text-slate-600"}`}
+                  className={`toggle-item flex-1 ${course === c ? "toggle-item-active" : ""}`}
                 >
                   {COURSE_LABEL[c]}
                 </button>
@@ -126,7 +126,7 @@ export default function MeetForm(props: {
 
       <section className="card space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">結果</h2>
+          <h2 className="section-title">結果</h2>
           <button
             type="button"
             className="btn-secondary"
@@ -190,7 +190,7 @@ export default function MeetForm(props: {
         ))}
       </section>
 
-      {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
+      {error && <p className="error-box">{error}</p>}
 
       <div className="sticky bottom-0 -mx-4 border-t border-slate-200 bg-slate-50/95 px-4 py-3 backdrop-blur">
         <button type="submit" className="btn-primary w-full py-3 text-base" disabled={saving}>

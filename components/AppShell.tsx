@@ -3,15 +3,53 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import {
+  CalendarIcon,
+  ChartIcon,
+  ChevronRight,
+  CloseIcon,
+  FlagIcon,
+  GearIcon,
+  MenuIcon,
+  PencilIcon,
+  TrophyIcon,
+  WaveLogo,
+} from "./Icons";
 
 const NAV_ITEMS = [
-  { href: "/calendar", label: "カレンダー", icon: "📅" },
-  { href: "/practices/new", label: "記録入力", icon: "✏️" },
-  { href: "/analysis", label: "分析", icon: "📈" },
-  { href: "/meets", label: "試合記録", icon: "🏁" },
-  { href: "/bests", label: "ベスト", icon: "🏆" },
-  { href: "/masters", label: "マスタ管理", icon: "⚙️" },
+  { href: "/calendar", match: ["/calendar", "/day"], label: "カレンダー", Icon: CalendarIcon },
+  { href: "/practices/new", match: ["/practices"], label: "記録入力", Icon: PencilIcon },
+  { href: "/analysis", match: ["/analysis"], label: "分析", Icon: ChartIcon },
+  { href: "/meets", match: ["/meets"], label: "試合記録", Icon: FlagIcon },
+  { href: "/bests", match: ["/bests"], label: "ベスト", Icon: TrophyIcon },
+  { href: "/masters", match: ["/masters"], label: "マスタ管理", Icon: GearIcon },
 ];
+
+/** サイドバー下部の波模様 */
+function SidebarWaves() {
+  return (
+    <svg
+      viewBox="0 0 300 220"
+      preserveAspectRatio="none"
+      className="pointer-events-none absolute inset-x-0 bottom-0 h-56 w-full"
+      aria-hidden
+    >
+      <path d="M0 90c60-40 120-40 180 0s90 30 120 10v120H0z" fill="#1e5bb8" fillOpacity=".35" />
+      <path d="M0 130c70-45 140-35 200 5s70 20 100 0v85H0z" fill="#2563eb" fillOpacity=".35" />
+      <path d="M0 170c80-35 150-25 210 5s60 15 90 0v45H0z" fill="#38bdf8" fillOpacity=".3" />
+    </svg>
+  );
+}
+
+function Logo() {
+  return (
+    <div className="flex flex-col items-center px-5 pb-6 pt-8 text-center">
+      <WaveLogo className="h-10 w-16" />
+      <div className="mt-1 text-[28px] font-extrabold tracking-tight text-white">Swim Log</div>
+      <div className="mt-1 text-xs text-sky-100/80">泳いだ日々を、もっと楽しく</div>
+    </div>
+  );
+}
 
 /** 左サイドバー（PC）／ハンバーガーメニュー（スマホ）付きの共通レイアウト */
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -21,65 +59,81 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   // 画面を移動したらメニューを閉じる
   useEffect(() => setOpen(false), [pathname]);
 
-  const current = NAV_ITEMS.find((item) => pathname.startsWith(item.href));
+  const isActive = (item: (typeof NAV_ITEMS)[number]) => item.match.some((m) => pathname.startsWith(m));
+  const current = NAV_ITEMS.find(isActive);
 
   const nav = (
-    <nav className="flex h-full flex-col">
-      <div className="px-5 py-5 text-xl font-bold text-brand-700">Swim Log</div>
-      <ul className="flex-1 space-y-1 px-3">
+    <nav className="relative flex h-full flex-col overflow-hidden bg-gradient-to-b from-navy-700 via-navy-800 to-navy-900">
+      <Logo />
+      <ul className="relative z-10 flex-1 space-y-1.5 px-3">
         {NAV_ITEMS.map((item) => {
-          const active = pathname.startsWith(item.href);
+          const active = isActive(item);
           return (
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-3 text-base ${
-                  active ? "bg-brand-100 font-semibold text-brand-800" : "text-slate-700 hover:bg-slate-100"
+                className={`flex items-center gap-4 rounded-2xl px-4 py-3.5 text-[15px] transition ${
+                  active
+                    ? "bg-gradient-to-r from-brand-500 to-navy-500 font-bold text-white shadow-[0_8px_20px_rgba(14,165,233,0.35)]"
+                    : "text-sky-50/90 hover:bg-white/10"
                 }`}
               >
-                <span aria-hidden>{item.icon}</span>
-                {item.label}
+                <item.Icon className="h-6 w-6 shrink-0" />
+                <span className="flex-1">{item.label}</span>
+                {active && <ChevronRight className="h-4 w-4" />}
               </Link>
             </li>
           );
         })}
       </ul>
+      <SidebarWaves />
     </nav>
   );
 
   return (
     <div className="min-h-dvh lg:flex">
       {/* PC：常に表示するサイドバー */}
-      <aside className="hidden w-60 shrink-0 border-r border-slate-200 bg-white lg:block">
+      <aside className="hidden w-64 shrink-0 lg:block">
         <div className="sticky top-0 h-dvh">{nav}</div>
       </aside>
 
       {/* スマホ：上部バー＋スライドメニュー */}
-      <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-slate-200 bg-white/95 px-2 backdrop-blur lg:hidden">
+      <header className="sticky top-0 z-30 flex h-14 items-center gap-2 bg-gradient-to-r from-navy-700 to-navy-800 px-2 text-white shadow-md lg:hidden">
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex h-11 w-11 items-center justify-center rounded-lg text-2xl text-slate-700 hover:bg-slate-100"
+          className="flex h-11 w-11 items-center justify-center rounded-xl hover:bg-white/10"
           aria-label="メニューを開く"
         >
-          ☰
+          <MenuIcon className="h-6 w-6" />
         </button>
-        <span className="font-semibold text-slate-700">{current?.label ?? "Swim Log"}</span>
+        <WaveLogo className="h-6 w-9" />
+        <span className="font-bold">{current?.label ?? "Swim Log"}</span>
       </header>
 
       {open && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <button
             type="button"
-            className="absolute inset-0 bg-black/40"
+            className="absolute inset-0 bg-navy-900/50"
             onClick={() => setOpen(false)}
             aria-label="メニューを閉じる"
           />
-          <aside className="absolute inset-y-0 left-0 w-64 bg-white shadow-xl">{nav}</aside>
+          <aside className="absolute inset-y-0 left-0 w-72 shadow-2xl">
+            {nav}
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="absolute right-2 top-2 z-20 flex h-10 w-10 items-center justify-center rounded-xl text-white hover:bg-white/10"
+              aria-label="メニューを閉じる"
+            >
+              <CloseIcon />
+            </button>
+          </aside>
         </div>
       )}
 
-      <main className="mx-auto w-full max-w-3xl flex-1 px-4 pb-24 pt-4 lg:pt-8">{children}</main>
+      <main className="mx-auto w-full max-w-5xl flex-1 px-3 pb-24 pt-4 sm:px-6 lg:px-10 lg:pt-10">{children}</main>
     </div>
   );
 }
