@@ -33,7 +33,7 @@ export default async function StatusPage() {
   });
   checks.push({
     label: "NEXT_PUBLIC_SUPABASE_URL",
-    ok: /^https:\/\/[a-z0-9]+\.supabase\.co\/?$/.test(SUPABASE_URL),
+    ok: /^https:\/\/[a-z0-9]+\.supabase\.co$/.test(SUPABASE_URL),
     detail: SUPABASE_URL ? SUPABASE_URL.replace(/^https:\/\/([a-z0-9]{4})[a-z0-9]*/, "https://$1…") : "未設定",
   });
   checks.push({

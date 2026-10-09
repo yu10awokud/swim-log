@@ -10,7 +10,7 @@ import { SUPABASE_URL } from "./env";
  * データベースには、このサーバー経由でしかアクセスできない仕組みです。
  */
 export function getSupabase() {
-  const secretKey = process.env.SUPABASE_SECRET_KEY;
+  const secretKey = process.env.SUPABASE_SECRET_KEY?.trim();
   if (!SUPABASE_URL || !secretKey) {
     throw new Error(
       "環境変数 NEXT_PUBLIC_SUPABASE_URL または SUPABASE_SECRET_KEY が設定されていません。" +
