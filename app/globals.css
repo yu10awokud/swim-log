@@ -32,62 +32,62 @@
 @layer components {
   /* 白いカード（全画面共通） */
   .card {
-    @apply rounded-2xl border border-white bg-white p-4 shadow-[0_6px_24px_rgba(18,61,132,0.07)];
+    @apply rounded-2xl border border-slate-100 bg-white p-4 shadow-[0_2px_12px_rgba(28,55,86,0.04)];
   }
   /* 画面全体を包む大きな白いパネル */
   .panel {
-    @apply rounded-3xl border border-white/80 bg-white/70 p-3 shadow-[0_10px_40px_rgba(18,61,132,0.06)] backdrop-blur sm:p-6;
+    @apply rounded-3xl border border-white/80 bg-white/60 p-3 shadow-[0_4px_24px_rgba(28,55,86,0.04)] backdrop-blur sm:p-6;
   }
   .label {
-    @apply mb-1 block text-sm font-semibold text-navy-800/80;
+    @apply mb-1 block text-sm text-slate-500;
   }
   .input {
     @apply block w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-base text-slate-800
-      focus:border-brand-400 focus:outline-none focus:ring-4 focus:ring-brand-100
+      focus:border-brand-300 focus:outline-none focus:ring-2 focus:ring-brand-100
       disabled:bg-slate-100;
   }
   .btn {
-    @apply inline-flex items-center justify-center gap-1 rounded-xl px-4 py-2 text-sm font-bold
+    @apply inline-flex items-center justify-center gap-1 rounded-xl px-4 py-2 text-sm font-medium
       transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-primary {
-    @apply btn bg-gradient-to-r from-brand-500 to-navy-500 text-white shadow-[0_6px_16px_rgba(14,165,233,0.3)] hover:brightness-105;
+    @apply btn bg-navy-500 text-white shadow-sm hover:bg-navy-600;
   }
   .btn-secondary {
-    @apply btn border border-slate-200 bg-white text-navy-700 shadow-sm hover:bg-sky-50;
+    @apply btn border border-slate-200 bg-white text-navy-700 hover:bg-slate-50;
   }
   .btn-danger {
     @apply btn border border-red-100 bg-white text-red-500 hover:bg-red-50;
   }
   /* 角の丸い白い四角ボタン（‹ › など） */
   .btn-square {
-    @apply inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-navy-700 shadow-sm transition hover:bg-sky-50 active:scale-95;
+    @apply inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-navy-700 transition hover:bg-slate-50 active:scale-95;
   }
   .page-title {
-    @apply text-2xl font-extrabold tracking-tight text-navy-900;
+    @apply text-2xl font-normal text-navy-900;
   }
   .page-subtitle {
     @apply text-sm text-slate-500;
   }
   .section-title {
-    @apply font-bold text-navy-900;
+    @apply font-medium text-navy-900;
   }
   /* 切り替えタブ（短水路／長水路 など） */
   .seg {
-    @apply flex rounded-2xl bg-sky-100/70 p-1 text-sm font-bold;
+    @apply flex rounded-2xl bg-slate-100 p-1 text-sm;
   }
   .seg-item {
-    @apply flex-1 rounded-xl py-2 text-center text-navy-700/60 transition;
+    @apply flex-1 rounded-xl py-2 text-center text-slate-500 transition;
   }
   .seg-item-active {
-    @apply bg-white text-brand-600 shadow-[0_2px_10px_rgba(18,61,132,0.1)];
+    @apply bg-white font-medium text-navy-800 shadow-sm;
   }
   /* 小さな切り替えボタン（フォーム内） */
   .chip {
     @apply rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 transition;
   }
   .chip-active {
-    @apply border-transparent bg-gradient-to-r from-brand-500 to-navy-500 font-bold text-white shadow-sm;
+    @apply border-navy-500 bg-navy-500 text-white;
   }
   /* 枠付きの2〜3択スイッチ（短水路／長水路 など、フォーム内） */
   .toggle {
@@ -97,7 +97,7 @@
     @apply rounded-lg px-3 py-1.5 text-slate-500 transition;
   }
   .toggle-item-active {
-    @apply bg-gradient-to-r from-brand-500 to-navy-500 font-bold text-white shadow-sm;
+    @apply bg-navy-500 text-white;
   }
   .error-box {
     @apply rounded-xl bg-red-50 px-3 py-2 text-sm text-red-600;

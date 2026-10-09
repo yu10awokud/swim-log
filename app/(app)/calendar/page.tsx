@@ -8,10 +8,10 @@ const WEEKDAYS = ["日", "月", "火", "水", "木", "金", "土"];
 
 /** 距離に応じたセルの色（多いほど濃い）。基準を変えたいときはここを直します。 */
 const LEVELS = [
-  { min: 7000, className: "border-brand-500 bg-brand-200/80", label: "7000〜" },
-  { min: 5000, className: "border-brand-400 bg-brand-100", label: "5000〜" },
-  { min: 3000, className: "border-brand-300 bg-brand-50", label: "3000〜" },
-  { min: 1, className: "border-brand-200 bg-sky-50/70", label: "〜2999" },
+  { min: 7000, className: "border-brand-400 bg-brand-100", label: "7000〜" },
+  { min: 5000, className: "border-brand-300 bg-brand-50", label: "5000〜" },
+  { min: 3000, className: "border-brand-200 bg-sky-50", label: "3000〜" },
+  { min: 1, className: "border-brand-100 bg-sky-50/50", label: "〜2999" },
 ];
 const levelClass = (distance: number) => LEVELS.find((l) => distance >= l.min)?.className ?? "";
 
@@ -65,7 +65,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
           <ChevronLeft />
         </Link>
         <div className="text-center">
-          <h1 className="text-2xl font-extrabold tracking-tight text-navy-900 sm:text-3xl">
+          <h1 className="text-2xl font-normal text-navy-900 sm:text-3xl">
             {y}年{m}月
           </h1>
           {month !== today.slice(0, 7) && (
@@ -109,12 +109,12 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
 
       {/* カレンダー本体 */}
       <div className="card p-2 sm:p-5">
-        <div className="mb-1 grid grid-cols-7 gap-1 text-center text-xs font-bold sm:mb-2 sm:gap-1.5 sm:text-sm">
+        <div className="mb-1 grid grid-cols-7 gap-1 text-center text-xs sm:mb-2 sm:gap-1.5 sm:text-sm">
           {WEEKDAYS.map((w, i) => (
             <div
               key={w}
               className={`rounded-lg py-1.5 sm:py-2.5 ${
-                i === 0 ? "bg-red-50 text-red-500" : i === 6 ? "bg-blue-50 text-blue-600" : "bg-sky-50 text-navy-800"
+                i === 0 ? "bg-red-50/70 text-red-400" : i === 6 ? "bg-blue-50/70 text-blue-500" : "bg-slate-50 text-slate-600"
               }`}
             >
               {w}
@@ -133,20 +133,20 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
                 key={date}
                 href={`/day/${date}`}
                 className={`flex aspect-[4/5] min-w-0 flex-col overflow-hidden rounded-lg border px-1 pb-1 pt-1 transition active:scale-95 sm:aspect-auto sm:min-h-[104px] sm:rounded-xl sm:px-2 sm:pt-1.5 ${
-                  distance ? `${levelClass(distance)} border-2` : "border-slate-200 bg-white hover:bg-sky-50/60"
-                } ${isToday ? "ring-2 ring-amber-300 ring-offset-1" : ""}`}
+                  distance ? `${levelClass(distance)} border` : "border-slate-100 bg-white hover:bg-slate-50"
+                } ${isToday ? "ring-1 ring-amber-300" : ""}`}
               >
                 <span
-                  className={`text-xs font-semibold sm:text-base ${
-                    weekday === 0 ? "text-red-500" : weekday === 6 ? "text-blue-600" : "text-navy-800"
+                  className={`text-xs sm:text-base ${
+                    weekday === 0 ? "text-red-400" : weekday === 6 ? "text-blue-500" : "text-navy-800"
                   }`}
                 >
                   {Number(date.slice(8))}
                 </span>
                 {distance > 0 && (
                   <span className="mt-auto flex flex-col items-center text-navy-800">
-                    <SwimIcon className="hidden h-6 w-6 text-brand-500 sm:block" />
-                    <span className="text-[11px] font-extrabold leading-tight tabular-nums sm:text-base">
+                    <SwimIcon className="hidden h-5 w-5 text-brand-400 sm:block" />
+                    <span className="text-[11px] font-semibold leading-tight tabular-nums sm:text-base">
                       {shortDistance(distance)}
                     </span>
                     {poolNames.length > 0 && (

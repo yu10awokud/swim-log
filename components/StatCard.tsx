@@ -13,7 +13,7 @@ const TONES: Record<Tone, { badge: string; deco: string }> = {
 function Decoration({ kind, color }: { kind: Deco; color: string }) {
   if (kind === "none") return null;
   return (
-    <svg viewBox="0 0 90 40" className="pointer-events-none absolute bottom-2 right-2 hidden h-8 w-20 opacity-60 xl:block" aria-hidden>
+    <svg viewBox="0 0 90 40" className="pointer-events-none absolute bottom-2 right-2 hidden h-8 w-20 opacity-40 xl:block" aria-hidden>
       {kind === "wave" && (
         <>
           <path d="M2 30c14-12 26-12 40-4s28 6 46-14" fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" />
@@ -55,10 +55,10 @@ export default function StatCard(props: {
         </div>
       )}
       <div className="relative z-10 min-w-0">
-        <div className="text-xs font-semibold text-slate-500">{props.label}</div>
-        <div className="mt-0.5 whitespace-nowrap text-lg font-extrabold tabular-nums tracking-tight text-navy-900 sm:text-2xl md:text-3xl">
+        <div className="text-xs text-slate-500">{props.label}</div>
+        <div className="mt-0.5 whitespace-nowrap text-lg font-medium tabular-nums text-navy-900 sm:text-2xl md:text-3xl">
           {props.value}
-          {props.unit && <span className="ml-0.5 text-xs font-bold sm:text-base">{props.unit}</span>}
+          {props.unit && <span className="ml-0.5 text-xs sm:text-base">{props.unit}</span>}
         </div>
         {props.sub && <div className="text-xs text-slate-500">{props.sub}</div>}
       </div>

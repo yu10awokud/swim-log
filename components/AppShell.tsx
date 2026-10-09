@@ -34,9 +34,9 @@ function SidebarWaves() {
       className="pointer-events-none absolute inset-x-0 bottom-0 h-56 w-full"
       aria-hidden
     >
-      <path d="M0 90c60-40 120-40 180 0s90 30 120 10v120H0z" fill="#1e5bb8" fillOpacity=".35" />
-      <path d="M0 130c70-45 140-35 200 5s70 20 100 0v85H0z" fill="#2563eb" fillOpacity=".35" />
-      <path d="M0 170c80-35 150-25 210 5s60 15 90 0v45H0z" fill="#38bdf8" fillOpacity=".3" />
+      <path d="M0 90c60-40 120-40 180 0s90 30 120 10v120H0z" fill="#ffffff" fillOpacity=".04" />
+      <path d="M0 130c70-45 140-35 200 5s70 20 100 0v85H0z" fill="#ffffff" fillOpacity=".05" />
+      <path d="M0 170c80-35 150-25 210 5s60 15 90 0v45H0z" fill="#ffffff" fillOpacity=".06" />
     </svg>
   );
 }
@@ -45,8 +45,8 @@ function Logo() {
   return (
     <div className="flex flex-col items-center px-5 pb-6 pt-8 text-center">
       <WaveLogo className="h-10 w-16" />
-      <div className="mt-1 text-[28px] font-extrabold tracking-tight text-white">Swim Log</div>
-      <div className="mt-1 text-xs text-sky-100/80">泳いだ日々を、もっと楽しく</div>
+      <div className="mt-1 text-[26px] font-normal tracking-wide text-white">Swim Log</div>
+      <div className="mt-1 text-[11px] text-sky-100/50">泳いだ日々を、もっと楽しく</div>
     </div>
   );
 }
@@ -63,7 +63,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const current = NAV_ITEMS.find(isActive);
 
   const nav = (
-    <nav className="relative flex h-full flex-col overflow-hidden bg-gradient-to-b from-navy-700 via-navy-800 to-navy-900">
+    <nav className="relative flex h-full flex-col overflow-hidden bg-gradient-to-b from-navy-700 to-navy-900">
       <Logo />
       <ul className="relative z-10 flex-1 space-y-1.5 px-3">
         {NAV_ITEMS.map((item) => {
@@ -74,11 +74,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 href={item.href}
                 className={`flex items-center gap-4 rounded-2xl px-4 py-3.5 text-[15px] transition ${
                   active
-                    ? "bg-gradient-to-r from-brand-500 to-navy-500 font-bold text-white shadow-[0_8px_20px_rgba(14,165,233,0.35)]"
-                    : "text-sky-50/90 hover:bg-white/10"
+                    ? "bg-white/[0.12] text-white"
+                    : "text-sky-50/80 hover:bg-white/[0.06]"
                 }`}
               >
-                <item.Icon className="h-6 w-6 shrink-0" />
+                <item.Icon className="h-5 w-5 shrink-0" />
                 <span className="flex-1">{item.label}</span>
                 {active && <ChevronRight className="h-4 w-4" />}
               </Link>
@@ -98,7 +98,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* スマホ：上部バー＋スライドメニュー */}
-      <header className="sticky top-0 z-30 flex h-14 items-center gap-2 bg-gradient-to-r from-navy-700 to-navy-800 px-2 text-white shadow-md lg:hidden">
+      <header className="sticky top-0 z-30 flex h-14 items-center gap-2 bg-navy-700 px-2 text-white lg:hidden">
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -108,7 +108,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <MenuIcon className="h-6 w-6" />
         </button>
         <WaveLogo className="h-6 w-9" />
-        <span className="font-bold">{current?.label ?? "Swim Log"}</span>
+        <span>{current?.label ?? "Swim Log"}</span>
       </header>
 
       {open && (

@@ -68,7 +68,7 @@ export default async function DayPage({ params }: { params: Promise<{ date: stri
         <article key={p.id} className="card space-y-3">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <div className="text-3xl font-extrabold tabular-nums tracking-tight text-navy-900">
+              <div className="text-3xl font-medium tabular-nums text-navy-900">
                 {p.total_distance.toLocaleString()}
                 <span className="ml-0.5 text-sm font-normal text-slate-500">m</span>
               </div>

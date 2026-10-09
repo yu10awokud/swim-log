@@ -8,7 +8,7 @@ function Svg({ className, children }: IconProps & { children: React.ReactNode })
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={2}
+      strokeWidth={1.6}
       strokeLinecap="round"
       strokeLinejoin="round"
       className={className ?? "h-5 w-5"}
@@ -33,7 +33,7 @@ export const PencilIcon = (p: IconProps) => (
 );
 export const ChartIcon = (p: IconProps) => (
   <Svg {...p}>
-    <path d="M5 20V11M12 20V5M19 20v-7" strokeWidth={3} />
+    <path d="M5 20V11M12 20V5M19 20v-7" strokeWidth={2} />
   </Svg>
 );
 export const FlagIcon = (p: IconProps) => (
@@ -107,15 +107,15 @@ export function WaveLogo({ className }: IconProps) {
       <path
         d="M6 22c6-10 16-14 26-10-6 1-10 4-12 8 6-6 16-8 24-3-7 0-12 2-15 6 7-4 15-4 23 1"
         fill="none"
-        stroke="#7dd3fc"
-        strokeWidth="5"
+        stroke="#bae6fd"
+        strokeWidth="3.5"
         strokeLinecap="round"
       />
       <path
         d="M4 32c6 0 8-4 14-4s8 4 14 4 8-4 14-4 8 4 14 4"
         fill="none"
-        stroke="#38bdf8"
-        strokeWidth="4"
+        stroke="#7dd3fc"
+        strokeWidth="3"
         strokeLinecap="round"
       />
     </svg>

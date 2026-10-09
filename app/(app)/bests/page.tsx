@@ -81,7 +81,7 @@ export default async function BestsPage({ searchParams }: { searchParams: Promis
               <li key={`${row.stroke_id}-${row.distance}`}>
                 <Link href={`/meets#meet-${row.meet_id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50">
                   <span className="w-16 shrink-0 text-sm text-slate-600">{row.distance}m</span>
-                  <span className="w-24 shrink-0 text-right font-mono text-lg font-extrabold tabular-nums text-navy-900">
+                  <span className="w-24 shrink-0 text-right font-mono text-lg font-medium tabular-nums text-navy-900">
                     {formatTime(row.time_cs)}
                   </span>
                   <span className="min-w-0 flex-1 text-right text-xs text-slate-500">
